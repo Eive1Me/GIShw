@@ -2,6 +2,8 @@ package sample;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -14,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Optional;
 
 
 public class Controller {
@@ -42,12 +45,29 @@ public class Controller {
         } catch (IOException ignored){}
     }
 
-    public void saveF(){
-
+    public boolean saveF(){
+        return true;
     }
 
     public void closeF(){
-        imgView.setImage(null);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Закрытие карты");
+        alert.setHeaderText("Сохранить карту?");
+        ButtonType ye = new ButtonType("Да");
+        ButtonType nyo = new ButtonType("Нет");
+        ButtonType goBack = new ButtonType("Отмена");
+        alert.getButtonTypes().clear();
+        alert.getButtonTypes().addAll(ye,nyo,goBack);
+
+        Optional<ButtonType> option = alert.showAndWait();
+
+        if (option.isPresent()) {
+            if (option.get() == ye) {
+                if (saveF()) imgView.setImage(null);
+            } else if (option.get() == nyo) {
+                imgView.setImage(null);
+            }
+        }
     }
 
     public void setCoords(MouseEvent e){

@@ -12,7 +12,7 @@
             <items>
               <MenuItem mnemonicParsing="false" onAction="#openF" text="Открыть карту" />
                   <MenuItem mnemonicParsing="false" onAction="#saveF" text="Сохранить карту" />
-                  <MenuItem mnemonicParsing="false" text="Закрыть карту" />
+                  <MenuItem mnemonicParsing="false" onAction="#closeF" text="Закрыть карту" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="БД">
