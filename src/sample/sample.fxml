@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Файл">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#openF" text="Открыть карту" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveF" text="Сохранить карту" />
+                  <MenuItem mnemonicParsing="false" text="Закрыть карту" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="БД">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Таблица" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Фигуры">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Круг" />
+                  <MenuItem mnemonicParsing="false" text="Прямоугольник" />
+                  <MenuItem mnemonicParsing="false" text="Треугольник" />
+              </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <bottom>
+      <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <items>
+            <Label fx:id="coordsLbl" prefHeight="25.0" prefWidth="100.0" text="0;0" />
+            <Label fx:id="coordsLbl1" layoutX="10.0" layoutY="13.0" prefHeight="25.0" prefWidth="50.0" text="Coords:" />
+          <Button mnemonicParsing="false" text="BOOP" />
+        </items>
+      </ToolBar>
+   </bottom>
+   <center>
+      <AnchorPane fx:id="pane" onMouseMoved="#setCoords" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fx:id="imgView" fitHeight="335.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>
