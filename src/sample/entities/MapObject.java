@@ -20,6 +20,10 @@ public class MapObject {
         this.layer = layer;
     }
 
+    public MapObject() {
+
+    }
+
     public sample.databasemanage.entity.MapObject toDbEntity(sample.entities.MapObject object, Integer mapID) {
         sample.databasemanage.entity.MapObject entity = new sample.databasemanage.entity.MapObject();
         javafx.scene.shape.Shape sh = (javafx.scene.shape.Shape) object.getShape();

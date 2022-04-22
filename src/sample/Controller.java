@@ -23,6 +23,7 @@ import sample.entities.MapObject;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -90,9 +91,53 @@ public class Controller implements Initializable {
         return true;
     }
 
+    public boolean openFromDatabase() throws IOException {
+        //retrieve map image
+        ArrayList<Map> maps = mapRepo.select();
+        Map chosenMap = maps.get(19);
+
+        //retrieve map data
+        startShirota = chosenMap.getStartShirota();
+        startDolgota = chosenMap.getStartDolgota();
+        endShirota = chosenMap.getEndShirota();
+        endDolgota = chosenMap.getEndDolgota();
+
+        try {
+            img = ImageIO.read(new ByteArrayInputStream(chosenMap.getImage()));
+            imgView.setImage(null);
+            imgView.setImage(SwingFXUtils.toFXImage(img,null));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //retrieve objects
+        ArrayList<sample.databasemanage.entity.MapObject> mapObjectsDB = mapObjectRepo.selectByMapId(chosenMap.getId());
+        mapObjects = new ArrayList<>();
+        for (sample.databasemanage.entity.MapObject objDB: mapObjectsDB) {
+            ArrayList<Coordinate> coords = coordinateRepo.selectByObjectId(objDB.getId());
+
+            if (objDB.getShape() == sample.databasemanage.entity.MapObject.Shape.CIRCLE
+            || objDB.getShape() == sample.databasemanage.entity.MapObject.Shape.ELLIPSE) {
+                ArrayList<Radius> radius = radiusRepo.selectByObjectId(objDB.getId());
+                mapObjects.add(objDB.toObject(coords, radius.get(0)));
+            }
+            else
+                mapObjects.add(objDB.toObject(coords));
+        }
+
+        System.out.println(mapObjects.size());
+        System.out.println(mapObjects.get(0).getName());
+        System.out.println(mapObjects.get(1).getName());
+        System.out.println(mapObjects.get(2).getName());
+        System.out.println(mapObjects.get(3).getName());
+        return true;
+    }
 
     public boolean saveToDatabase() throws IOException {
         mapObjects.add(new MapObject("obj", "descr", new Rectangle(99, 88, 77, 66), 1));
+        mapObjects.add(new MapObject("obj2", "descr2", new Circle(99, 88, 77), 1));
+        mapObjects.add(new MapObject("obj3", "descr2", new Line(99, 88, 77, 10), 1));
+        mapObjects.add(new MapObject("obj4", "descr2", new Ellipse(99, 88, 77, 10), 1));
         //save to database as map
         //save as new map
         Map map = new Map(1, startShirota, startDolgota, endShirota, endDolgota, startX, startY, endX, endY, file);
@@ -102,7 +147,6 @@ public class Controller implements Initializable {
             obj = mapObjectRepo.insert(obj);
 
             //insert coordinates and radiuses
-            //only circle and ellipse for now
             Shape shape = (Shape) object.getShape();
             if (Utils.isCircle(shape)) {
                 Circle sh = (Circle) object.getShape();

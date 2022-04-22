@@ -23,6 +23,9 @@ public class MapObjectRepo implements IRestRepository<MapObject> {
             "FROM \"map_object\" " +
             "WHERE \"id\" = ?";
 
+    private static String selectByMapIdQuery = "SELECT \"id\", \"map_id\", \"name\", \"description\", \"shape\", \"color\", \"layer\" " +
+            "FROM \"map_object\" " +
+            "WHERE \"map_id\" = ?";
     private static String insertQuery = "INSERT INTO \"map_object\"(\"map_id\", \"name\", \"description\", \"shape\", \"color\", \"layer\") " +
             "VALUES (?, ?, ?, ?, ?, ?) " +
             "RETURNING \"id\", \"map_id\", \"name\", \"description\", \"shape\", \"color\", \"layer\" ";
@@ -69,6 +72,26 @@ public class MapObjectRepo implements IRestRepository<MapObject> {
             while (result.next()) return new MapObject(result.getInt(1), result.getInt(2),
                     result.getString(3), result.getString(4),
                     MapObject.Shape.valueOf(result.getString(5)), result.getString(6), result.getInt(7));
+
+        } catch (SQLException ex) {
+
+            Logger lgr = Logger.getLogger(MapObjectRepo.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return null;
+    }
+
+    public ArrayList<MapObject> selectByMapId(Integer id) {
+        try (PreparedStatement pst = con.prepareStatement(selectByMapIdQuery)) {
+
+            pst.setInt(1, id);
+            ResultSet result = pst.executeQuery();
+            System.out.println("Successfully selected.");
+            ArrayList<MapObject> objects = new ArrayList<>();
+            while (result.next()) objects.add(new MapObject(result.getInt(1), result.getInt(2),
+                    result.getString(3), result.getString(4),
+                    MapObject.Shape.valueOf(result.getString(5)), result.getString(6), result.getInt(7)));
+            return objects;
 
         } catch (SQLException ex) {
 

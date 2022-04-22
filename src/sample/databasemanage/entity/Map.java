@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public class Map extends BaseEntity {
     private byte[] image;
+    private File fileImage;
     //54*60+40=минуты долготы
     private Integer startShirota;
     private Integer startDolgota;
@@ -19,6 +20,14 @@ public class Map extends BaseEntity {
 
     public Double getStartX() {
         return startX;
+    }
+
+    public File getFileImage() {
+        return fileImage;
+    }
+
+    public void setFileImage(File fileImage) {
+        this.fileImage = fileImage;
     }
 
     public void setStartX(Double startX) {
@@ -73,11 +82,12 @@ public class Map extends BaseEntity {
         this.endX = endX;
         this.endY = endY;
 
-        BufferedImage bImage = ImageIO.read(image);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ImageIO.write(bImage, getExtensionByStringHandling(image.getName()).toString(), bos );
-        byte [] data = bos.toByteArray();
-        this.image = data;
+//        BufferedImage bImage = ImageIO.read(image);
+//        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//        ImageIO.write(bImage, getExtensionByStringHandling(image.getName()).toString(), bos );
+//        byte [] data = bos.toByteArray();
+//        this.image = data;
+        this.fileImage = image;
     }
 
     public Optional<String> getExtensionByStringHandling(String filename) {
