@@ -27,7 +27,8 @@ public class MapObject {
         entity.setShape(Utils.toShape(sh.getClass().getName()));
         entity.setName(object.getName());
         entity.setDescription(object.getDescription());
-        entity.setColor(sh.getFill().toString());
+        if (sh.getFill() != null)
+                entity.setColor(sh.getFill().toString());
         entity.setLayer(1);
         entity.setMapID(mapID);
 

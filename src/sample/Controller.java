@@ -11,6 +11,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -94,7 +95,7 @@ public class Controller implements Initializable {
 
 
     public boolean saveToDatabase() throws IOException {
-        mapObjects.add(new MapObject("obj", "descr", new Ellipse(4, 10, 15, 11), 1));
+        mapObjects.add(new MapObject("obj", "descr", new Line(99, 88, 77, 66), 1));
         //save to database as map
         //save as new map
         Map map = new Map(1, startShirota, startDolgota, endShirota, endDolgota, startX, startY, endX, endY, file);
@@ -103,7 +104,7 @@ public class Controller implements Initializable {
             sample.databasemanage.entity.MapObject obj = object.toDbEntity(object, map.getId());
             obj = mapObjectRepo.insert(obj);
 
-            //insert coordinates
+            //insert coordinates and radiuses
             //only circle and ellipse for now
             Shape shape = (Shape) object.getShape();
             if (Utils.isCircle(shape)) {
@@ -119,6 +120,13 @@ public class Controller implements Initializable {
                 objCoordinates = coordinateRepo.insert(objCoordinates);
                 Radius radius = new Radius(1, obj.getId(), sh.getRadiusX(), sh.getRadiusY());
                 radius = radiusRepo.insert(radius);
+            }
+            else if (Utils.isLine(shape)) {
+                Line sh = (Line) object.getShape();
+                Coordinate objCoordinates = new Coordinate(1, obj.getId(), sh.getStartX(), sh.getStartY());
+                coordinateRepo.insert(objCoordinates);
+                objCoordinates = new Coordinate(1, obj.getId(), sh.getEndX(), sh.getEndY());
+                coordinateRepo.insert(objCoordinates);
             }
         }
         return true;

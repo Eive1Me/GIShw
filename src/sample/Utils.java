@@ -24,4 +24,10 @@ public class Utils {
             return true;
         return false;
     }
+
+    public static boolean isLine(Shape shape) {
+        if (toShape(shape.getClass().getName()) == MapObject.Shape.LINE)
+            return true;
+        return false;
+    }
 }
