@@ -68,8 +68,9 @@ public class MapObject {
             }
             case "javafx.scene.shape.Polygon": {
                 //todo
-                Polygon polygon = (Polygon) shape;
-                return 0;
+                return shape.getScaleX();
+//                Polygon polygon = (Polygon) shape;
+//                return 0;
             }
             case "javafx.scene.shape.Line":
             case "javafx.scene.shape.Path": {

@@ -2,14 +2,24 @@ package sample.databasemanage.entity;
 
 public class Radius extends BaseEntity{
     private Integer objectID;
-    private Double radX;
-    private Double radY;
+    private Double X;
+    private Double Y;
+    private Double value;
 
-    public Radius(Integer id, Integer objectID, Double radX, Double radY) {
+    public Double getValue() {
+        return value;
+    }
+
+    public void setValue(Double value) {
+        this.value = value;
+    }
+
+    public Radius(Integer id, Integer objectID, Double X, Double Y, Double value) {
         super(id);
         this.objectID = objectID;
-        this.radX = radX;
-        this.radY = radY;
+        this.X = X;
+        this.Y = Y;
+        this.value = value;
     }
 
     public Integer getObjectID() {
@@ -20,19 +30,19 @@ public class Radius extends BaseEntity{
         this.objectID = objectID;
     }
 
-    public Double getRadX() {
-        return radX;
+    public Double getX() {
+        return X;
     }
 
-    public void setRadX(Double radX) {
-        this.radX = radX;
+    public void setX(Double x) {
+        this.X = x;
     }
 
-    public Double getRadY() {
-        return radY;
+    public Double getY() {
+        return Y;
     }
 
-    public void setRadY(Double radY) {
-        this.radY = radY;
+    public void setY(Double y) {
+        this.Y = y;
     }
 }
