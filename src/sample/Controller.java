@@ -9,10 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Ellipse;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import sample.databasemanage.entity.Coordinate;
@@ -95,7 +92,7 @@ public class Controller implements Initializable {
 
 
     public boolean saveToDatabase() throws IOException {
-        mapObjects.add(new MapObject("obj", "descr", new Line(99, 88, 77, 66), 1));
+        mapObjects.add(new MapObject("obj", "descr", new Rectangle(99, 88, 77, 66), 1));
         //save to database as map
         //save as new map
         Map map = new Map(1, startShirota, startDolgota, endShirota, endDolgota, startX, startY, endX, endY, file);
@@ -127,6 +124,17 @@ public class Controller implements Initializable {
                 coordinateRepo.insert(objCoordinates);
                 objCoordinates = new Coordinate(1, obj.getId(), sh.getEndX(), sh.getEndY());
                 coordinateRepo.insert(objCoordinates);
+            }
+            else if (Utils.isRectangle(shape)) {
+                Rectangle sh = (Rectangle) object.getShape();
+                Coordinate objCoord1 = new Coordinate(1, obj.getId(), sh.getX(), sh.getY());
+                Coordinate objCoord2 = new Coordinate(1, obj.getId(), sh.getX() + sh.getWidth(), sh.getY());
+                Coordinate objCoord3 = new Coordinate(1, obj.getId(), sh.getX(), sh.getY() - sh.getHeight());
+                Coordinate objCoord4 = new Coordinate(1, obj.getId(), sh.getX() + sh.getWidth(), sh.getY() - sh.getHeight());
+                coordinateRepo.insert(objCoord1);
+                coordinateRepo.insert(objCoord2);
+                coordinateRepo.insert(objCoord3);
+                coordinateRepo.insert(objCoord4);
             }
         }
         return true;

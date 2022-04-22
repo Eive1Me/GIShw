@@ -30,4 +30,10 @@ public class Utils {
             return true;
         return false;
     }
+
+    public static boolean isRectangle(Shape shape) {
+        if (toShape(shape.getClass().getName()) == MapObject.Shape.RECTANGLE)
+            return true;
+        return false;
+    }
 }
