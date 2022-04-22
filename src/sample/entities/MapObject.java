@@ -3,6 +3,7 @@ package sample.entities;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import sample.Utils;
 
 import java.util.List;
 
@@ -17,6 +18,20 @@ public class MapObject {
         this.description = description;
         this.shape = shape;
         this.layer = layer;
+    }
+
+    public sample.databasemanage.entity.MapObject toDbEntity(sample.entities.MapObject object, Integer mapID) {
+        sample.databasemanage.entity.MapObject entity = new sample.databasemanage.entity.MapObject();
+        javafx.scene.shape.Shape sh = (javafx.scene.shape.Shape) object.getShape();
+
+        entity.setShape(Utils.toShape(sh.getClass().getName()));
+        entity.setName(object.getName());
+        entity.setDescription(object.getDescription());
+        entity.setColor(sh.getFill().toString());
+        entity.setLayer(1);
+        entity.setMapID(mapID);
+
+        return entity;
     }
 
     public String getName() {

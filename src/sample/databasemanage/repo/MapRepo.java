@@ -18,17 +18,17 @@ public class MapRepo implements IRestRepository<Map> {
     String password = "123";
     Connection con;
 
-    private static String selectQuery = "SELECT \"id\", \"image\" " +
+    private static String selectQuery = "SELECT \"id\",  \"start_shirota\", \"start_dolgota\", \"end_shirota\", \"end_dolgota\", \"start_x\", \"start_y\", \"end_x\", \"end_y\", \"image\"  " +
             "FROM \"map\" " +
             "ORDER BY \"id\"";
 
-    private static String selectByIdQuery = "SELECT \"id\",  \"image\" " +
+    private static String selectByIdQuery = "SELECT \"id\",  \"start_shirota\", \"start_dolgota\", \"end_shirota\", \"end_dolgota\", \"start_x\", \"start_y\", \"end_x\", \"end_y\", \"image\" " +
             "FROM \"map\" " +
             "WHERE \"id\" = ?";
 
-    private static String insertQuery = "INSERT INTO \"map\"( \"image\") " +
-            "VALUES (?) " +
-            "RETURNING \"id\", \"image\" ";
+    private static String insertQuery = "INSERT INTO \"map\"( \"start_shirota\", \"start_dolgota\", \"end_shirota\", \"end_dolgota\", \"start_x\", \"start_y\", \"end_x\", \"end_y\", \"image\" ) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+            "RETURNING \"id\", \"start_shirota\", \"start_dolgota\", \"end_shirota\", \"end_dolgota\", \"start_x\", \"start_y\", \"end_x\", \"end_y\", \"image\" ";
 
 //    private static String updateQuery = "UPDATE \"order\" " +
 //            "SET \"client_id\" = ?, \"item_id\" = ?, \"work_id\" = ?, \"accessory_id\" = ?, \"payment\" = ?, \"prepayment\" = ?, \"order_date\" = ?, \"deadline\" = ?, \"status\" = ? " +
@@ -37,7 +37,7 @@ public class MapRepo implements IRestRepository<Map> {
 
     private static String deleteQuery = "DELETE FROM \"map\" " +
             "WHERE \"id\" = ? " +
-            "RETURNING \"id\", \"image\" ";
+            "RETURNING \"id\", \"start_shirota\", \"start_dolgota\", \"end_shirota\", \"end_dolgota\", \"start_x\", \"start_y\", \"end_x\", \"end_y\", \"image\"  ";
 
     public MapRepo() throws SQLException {
         con = DriverManager.getConnection(url, user, password);
@@ -49,7 +49,12 @@ public class MapRepo implements IRestRepository<Map> {
             ResultSet result = pst.executeQuery();
             System.out.println("Successfully selected.");
             ArrayList<Map> objects = new ArrayList<>();
-            while (result.next()) objects.add(new Map(result.getInt(1), result.getBytes(2)));
+            while (result.next()) objects.add(new Map(result.getInt(1),
+                    result.getInt(2), result.getInt(3),
+                    result.getInt(4), result.getInt(5),
+                    result.getDouble(6), result.getDouble(7),
+                    result.getDouble(8), result.getDouble(9),
+                    result.getBytes(10)));
             return objects;
 
         } catch (SQLException ex) {
@@ -67,7 +72,12 @@ public class MapRepo implements IRestRepository<Map> {
             pst.setInt(1, id);
             ResultSet result = pst.executeQuery();
             System.out.println("Successfully selected.");
-            while (result.next()) return new Map(result.getInt(1), result.getBytes(2));
+            while (result.next()) return new Map(result.getInt(1),
+                    result.getInt(2), result.getInt(3),
+                    result.getInt(4), result.getInt(5),
+                    result.getDouble(6), result.getDouble(7),
+                    result.getDouble(8), result.getDouble(9),
+                    result.getBytes(10));
 
         } catch (SQLException ex) {
 
@@ -81,10 +91,23 @@ public class MapRepo implements IRestRepository<Map> {
     public Map insert(Map entity) {
         try (PreparedStatement pst = con.prepareStatement(insertQuery)) {
 
-            pst.setBytes(1, entity.getImage());
+            pst.setInt(1, entity.getStartShirota());
+            pst.setInt(2, entity.getStartDolgota());
+            pst.setInt(3, entity.getEndShirota());
+            pst.setInt(4, entity.getEndDolgota());
+            pst.setDouble(5, entity.getStartX());
+            pst.setDouble(6, entity.getStartY());
+            pst.setDouble(7, entity.getEndX());
+            pst.setDouble(8, entity.getEndY());
+            pst.setBytes(9, entity.getImage());
             ResultSet result = pst.executeQuery();
             System.out.println("Successfully created.");
-            while (result.next()) return new Map(result.getInt(1), result.getBytes(2));
+            while (result.next()) return new Map(result.getInt(1),
+                    result.getInt(2), result.getInt(3),
+                    result.getInt(4), result.getInt(5),
+                    result.getDouble(6), result.getDouble(7),
+                    result.getDouble(8), result.getDouble(9),
+                    result.getBytes(10));
 
         } catch (SQLException ex) {
 
@@ -123,7 +146,12 @@ public class MapRepo implements IRestRepository<Map> {
             pst.setInt(1, id);
             ResultSet result = pst.executeQuery();
             System.out.println("Successfully deleted.");
-            while (result.next()) return new Map(result.getInt(1), result.getBytes(2));
+            while (result.next()) return new Map(result.getInt(1),
+                    result.getInt(2), result.getInt(3),
+                    result.getInt(4), result.getInt(5),
+                    result.getDouble(6), result.getDouble(7),
+                    result.getDouble(8), result.getDouble(9),
+                    result.getBytes(10));
 
         } catch (SQLException ex) {
 

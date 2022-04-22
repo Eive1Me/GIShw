@@ -1,6 +1,12 @@
 package sample.databasemanage.entity;
 
-public class MapObject extends BaseEntity {
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+
+public class MapObject {
+    private Integer id;
     private Integer mapID;
     private String name;
     private String description;
@@ -8,12 +14,43 @@ public class MapObject extends BaseEntity {
     private String color;
     private int layer;
 
-    public MapObject(Integer id) {
-        super(id);
+    public MapObject() {
+    }
+    public MapObject toDbEntity(sample.entities.MapObject object, Integer mapID) {
+        MapObject entity = new MapObject();
+        javafx.scene.shape.Shape sh = (javafx.scene.shape.Shape) object.getShape();
+        System.out.println(sh.getClass().toString());
+        switch (sh.getClass().toString()) {
+            case "javafx.scene.shape.Circle": {
+                entity.setShape(Shape.CIRCLE);
+            }
+            case "javafx.scene.shape.Rectangle": {
+                entity.setShape(Shape.RECTANGLE);
+            }
+            case "javafx.scene.shape.Ellipse": {
+                entity.setShape(Shape.ELLIPSE);
+            }
+            case "javafx.scene.shape.Polygon": {
+                entity.setShape(Shape.POLYGON);
+            }
+            case "javafx.scene.shape.Line": {
+                entity.setShape(Shape.LINE);
+            }
+            case "javafx.scene.shape.Path": {
+                entity.setShape(Shape.PATH);
+            }
+        }
+        entity.setName(object.getName());
+        entity.setDescription(object.getDescription());
+        entity.setColor(sh.getFill().toString());
+        entity.setLayer(1);
+        entity.setMapID(mapID);
+
+        return entity;
     }
 
     public MapObject(Integer id, Integer mapID, String name, String description, Shape shape, String color, int layer) {
-        super(id);
+        this.id = id;
         this.name = name;
         this.description = description;
         this.shape = shape;

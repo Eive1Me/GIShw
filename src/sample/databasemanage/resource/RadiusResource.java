@@ -8,9 +8,9 @@ public class RadiusResource extends BaseResource{
     private Double radX;
     private Double radY;
 
-    public Radius toEntity() {
-        return new Radius(id, objectID, radX, radY);
-    }
+//    public Radius toEntity() {
+//        return new Radius(id, objectID, radX, radY);
+//    }
 
     public Integer getId() {
         return id;

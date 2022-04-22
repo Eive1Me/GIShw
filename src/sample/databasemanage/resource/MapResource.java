@@ -27,8 +27,8 @@ public class MapResource extends BaseResource {
         this.image = image;
     }
 
-    public Map toEntity() {
-        return new Map(id,
-                image);
-    }
+//    public Map toEntity() {
+//        return new Map(id,
+//                image);
+//    }
 }
