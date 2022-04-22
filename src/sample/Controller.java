@@ -67,7 +67,7 @@ public class Controller implements Initializable {
         file = fileChooser.showOpenDialog(stage);
         try {
             try {
-                //create new map with image from filechooser
+                //create new map with image from fileChooser
                 img = ImageIO.read(new FileInputStream(file));
                 imgView.setImage(null);
                 imgView.setImage(SwingFXUtils.toFXImage(img,null));
