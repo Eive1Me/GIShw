@@ -14,6 +14,14 @@ public class MapObject {
     private String color;
     private int layer;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public MapObject() {
     }
     public MapObject toDbEntity(sample.entities.MapObject object, Integer mapID) {

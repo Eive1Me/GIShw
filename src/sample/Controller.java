@@ -10,9 +10,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Shape;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import sample.databasemanage.entity.Coordinate;
 import sample.databasemanage.entity.Map;
+import sample.databasemanage.entity.Radius;
 import sample.databasemanage.repo.CoordinateRepo;
 import sample.databasemanage.repo.MapObjectRepo;
 import sample.databasemanage.repo.MapRepo;
@@ -90,7 +94,7 @@ public class Controller implements Initializable {
 
 
     public boolean saveToDatabase() throws IOException {
-        mapObjects.add(new MapObject("obj", "descr", new Circle(4, 10, 10), 1));
+        mapObjects.add(new MapObject("obj", "descr", new Ellipse(4, 10, 15, 11), 1));
         //save to database as map
         //save as new map
         Map map = new Map(1, startShirota, startDolgota, endShirota, endDolgota, startX, startY, endX, endY, file);
@@ -98,6 +102,24 @@ public class Controller implements Initializable {
         for (MapObject object: mapObjects) {
             sample.databasemanage.entity.MapObject obj = object.toDbEntity(object, map.getId());
             obj = mapObjectRepo.insert(obj);
+
+            //insert coordinates
+            //only circle and ellipse for now
+            Shape shape = (Shape) object.getShape();
+            if (Utils.isCircle(shape)) {
+                Circle sh = (Circle) object.getShape();
+                Coordinate objCoordinates = new Coordinate(1, obj.getId(), sh.getCenterX(), sh.getCenterY());
+                objCoordinates = coordinateRepo.insert(objCoordinates);
+                Radius radius = new Radius(1, obj.getId(), sh.getRadius(), sh.getRadius());
+                radius = radiusRepo.insert(radius);
+            }
+            else if (Utils.isEllipse(shape)) {
+                Ellipse sh = (Ellipse) object.getShape();
+                Coordinate objCoordinates = new Coordinate(1, obj.getId(), sh.getCenterX(), sh.getCenterY());
+                objCoordinates = coordinateRepo.insert(objCoordinates);
+                Radius radius = new Radius(1, obj.getId(), sh.getRadiusX(), sh.getRadiusY());
+                radius = radiusRepo.insert(radius);
+            }
         }
         return true;
     }
