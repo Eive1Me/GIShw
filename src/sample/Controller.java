@@ -2,7 +2,9 @@ package sample;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -88,6 +90,18 @@ public class Controller implements Initializable {
         return true;
     }
 
+    public void manageCoords(){
+        try {
+            AnchorPane pane = FXMLLoader.load(CoordsController.class.getResource("coords.fxml"));
+            Stage coordsStage = new Stage();
+            coordsStage.setTitle("Введите координаты на карте");
+            Scene scene = new Scene(pane);
+            coordsStage.setScene(scene);
+            coordsStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public boolean saveToDatabase() throws IOException {
         mapObjects.add(new MapObject("obj", "descr", new Circle(4, 10, 10), 1));
@@ -143,21 +157,6 @@ public class Controller implements Initializable {
             throw new RuntimeException(e);
         }
 
-    }
-
-    public static class Coords{
-        Double x;
-        Double y;
-
-        Coords(Double x, Double y){
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public String toString() {
-            return x + "; " + y;
-        }
     }
 
 }

@@ -1,18 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.CoordsController">
    <children>
-      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <ToolBar orientation="VERTICAL" prefHeight="400.0" prefWidth="150.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <ImageView fitHeight="400.0" fitWidth="390.0" onMouseClicked="#onLCanvasClick" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="210.0" AnchorPane.topAnchor="0.0" />
+      <ToolBar nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" prefHeight="400.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-            <Label text="Label" />
-          <Button mnemonicParsing="false" text="Button" />
-            <Label text="Label" />
+            <Label text="ЛКМ и ПКМ для выбора точек">
+               <padding>
+                  <Insets left="10.0" top="10.0" />
+               </padding></Label>
+            <Label nodeOrientation="LEFT_TO_RIGHT" prefWidth="200.0" text="Левый нижний угол карты" textAlignment="CENTER" wrapText="true">
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </Label>
+            <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefWidth="200.0">
+               <children>
+                  <TextField prefHeight="20.0" prefWidth="40.0" />
+                  <Label text="°" />
+                  <TextField layoutX="113.0" layoutY="17.0" prefHeight="20.0" prefWidth="40.0" />
+                  <Label layoutX="128.0" layoutY="22.0" text="' ;" />
+                  <TextField layoutX="174.0" layoutY="18.0" prefHeight="20.0" prefWidth="40.0" />
+                  <Label layoutX="130.0" layoutY="22.0" text="°" />
+                  <TextField layoutX="182.0" layoutY="18.0" prefHeight="20.0" prefWidth="40.0" />
+                  <Label layoutX="154.0" layoutY="22.0" text="'" />
+               </children>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </HBox>
+            <Label fx:id="llCrdsLbl" text="Label">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Label nodeOrientation="LEFT_TO_RIGHT" prefWidth="200.0" text="Правый верхний угол карты" textAlignment="CENTER" wrapText="true">
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </Label>
+            <HBox alignment="CENTER" layoutX="10.0" layoutY="31.0" nodeOrientation="LEFT_TO_RIGHT" prefWidth="200.0">
+               <children>
+                  <TextField prefHeight="20.0" prefWidth="40.0" />
+                  <Label text="°" />
+                  <TextField layoutX="113.0" layoutY="17.0" prefHeight="20.0" prefWidth="40.0" />
+                  <Label layoutX="207.0" layoutY="22.0" text="' ;" />
+                  <TextField layoutX="174.0" layoutY="18.0" prefHeight="20.0" prefWidth="40.0" />
+                  <Label layoutX="130.0" layoutY="22.0" text="°" />
+                  <TextField layoutX="182.0" layoutY="18.0" prefHeight="20.0" prefWidth="40.0" />
+                  <Label layoutX="128.0" layoutY="22.0" text="'" />
+               </children>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </HBox>
+            <Label fx:id="urCrdsLbl" layoutX="10.0" layoutY="31.0" text="Label">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" />
+               </padding></Label>
+          <Button mnemonicParsing="false" text="Подтвердить" />
         </items>
       </ToolBar>
    </children>
