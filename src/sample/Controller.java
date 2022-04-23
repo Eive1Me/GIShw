@@ -35,6 +35,11 @@ import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
 
+    private static Controller instance = new Controller();
+    public static Controller getInstance(){
+        return instance;
+    }
+
     @FXML
     AnchorPane pane;
     @FXML
@@ -52,6 +57,71 @@ public class Controller implements Initializable {
     Integer startDolgota = 5;
     Integer endShirota = 0;
     Integer endDolgota = 0;
+
+    public Integer getStartShirota() {
+        return startShirota;
+    }
+
+    public void setStartShirota(Integer startShirota) {
+        this.startShirota = startShirota;
+    }
+
+    public Integer getStartDolgota() {
+        return startDolgota;
+    }
+
+    public void setStartDolgota(Integer startDolgota) {
+        this.startDolgota = startDolgota;
+    }
+
+    public Integer getEndShirota() {
+        return endShirota;
+    }
+
+    public void setEndShirota(Integer endShirota) {
+        this.endShirota = endShirota;
+    }
+
+    public Integer getEndDolgota() {
+        return endDolgota;
+    }
+
+    public void setEndDolgota(Integer endDolgota) {
+        this.endDolgota = endDolgota;
+    }
+
+    public Double getStartX() {
+        return startX;
+    }
+
+    public void setStartX(Double startX) {
+        this.startX = startX;
+    }
+
+    public Double getStartY() {
+        return startY;
+    }
+
+    public void setStartY(Double startY) {
+        this.startY = startY;
+    }
+
+    public Double getEndX() {
+        return endX;
+    }
+
+    public void setEndX(Double endX) {
+        this.endX = endX;
+    }
+
+    public Double getEndY() {
+        return endY;
+    }
+
+    public void setEndY(Double endY) {
+        this.endY = endY;
+    }
+
     private Double startX = 0.0;
     private Double startY = 0.0;
     private Double endX = 0.0;
@@ -98,6 +168,7 @@ public class Controller implements Initializable {
             Scene scene = new Scene(pane);
             coordsStage.setScene(scene);
             coordsStage.show();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -148,14 +219,14 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        try {
-            coordinateRepo = new CoordinateRepo();
-            mapObjectRepo = new MapObjectRepo();
-            radiusRepo = new RadiusRepo();
-            mapRepo = new MapRepo();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            coordinateRepo = new CoordinateRepo();
+//            mapObjectRepo = new MapObjectRepo();
+//            radiusRepo = new RadiusRepo();
+//            mapRepo = new MapRepo();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
 
     }
 

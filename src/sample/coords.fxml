@@ -7,7 +7,7 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.CoordsController">
    <children>
-      <ImageView fitHeight="400.0" fitWidth="390.0" onMouseClicked="#onLCanvasClick" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="210.0" AnchorPane.topAnchor="0.0" />
+      <ImageView fitHeight="400.0" fitWidth="390.0" onMouseClicked="#onCanvasClick" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="210.0" AnchorPane.topAnchor="0.0" />
       <ToolBar nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" prefHeight="400.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
             <Label text="ЛКМ и ПКМ для выбора точек">
