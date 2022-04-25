@@ -1,7 +1,6 @@
 package sample;
 
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,15 +10,15 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import sample.databasemanage.entity.Coordinate;
 import sample.databasemanage.entity.Map;
+import sample.databasemanage.entity.Radius;
 import sample.databasemanage.repo.CoordinateRepo;
 import sample.databasemanage.repo.MapObjectRepo;
 import sample.databasemanage.repo.MapRepo;
@@ -28,6 +27,7 @@ import sample.entities.MapObject;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -166,6 +166,48 @@ public class Controller implements Initializable {
         return true;
     }
 
+    public boolean openFromDatabase() throws IOException {
+        //retrieve map image
+        ArrayList<Map> maps = mapRepo.select();
+        Map chosenMap = maps.get(19);
+
+        //retrieve map data
+        startShirota = chosenMap.getStartShirota();
+        startDolgota = chosenMap.getStartDolgota();
+        endShirota = chosenMap.getEndShirota();
+        endDolgota = chosenMap.getEndDolgota();
+
+        try {
+            img = ImageIO.read(new ByteArrayInputStream(chosenMap.getImage()));
+            imgView.setImage(null);
+            imgView.setImage(SwingFXUtils.toFXImage(img,null));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //retrieve objects
+        ArrayList<sample.databasemanage.entity.MapObject> mapObjectsDB = mapObjectRepo.selectByMapId(chosenMap.getId());
+        mapObjects = new ArrayList<>();
+        for (sample.databasemanage.entity.MapObject objDB: mapObjectsDB) {
+            ArrayList<Coordinate> coords = coordinateRepo.selectByObjectId(objDB.getId());
+
+            if (objDB.getShape() == sample.databasemanage.entity.MapObject.Shape.CIRCLE
+            || objDB.getShape() == sample.databasemanage.entity.MapObject.Shape.ELLIPSE) {
+                ArrayList<Radius> radius = radiusRepo.selectByObjectId(objDB.getId());
+                mapObjects.add(objDB.toObject(coords, radius.get(0)));
+            }
+            else
+                mapObjects.add(objDB.toObject(coords));
+        }
+
+        System.out.println(mapObjects.size());
+        System.out.println(mapObjects.get(0).getName());
+        System.out.println(mapObjects.get(1).getName());
+        System.out.println(mapObjects.get(2).getName());
+        System.out.println(mapObjects.get(3).getName());
+        return true;
+    }
+
     public void manageCoords(){
         try {
             AnchorPane pane = FXMLLoader.load(CoordsController.class.getResource("coords.fxml"));
@@ -181,7 +223,10 @@ public class Controller implements Initializable {
     }
 
     public boolean saveToDatabase() throws IOException {
-        mapObjects.add(new MapObject("obj", "descr", new Circle(4, 10, 10), 1));
+        mapObjects.add(new MapObject("obj", "descr", new Rectangle(99, 88, 77, 66), 1));
+        mapObjects.add(new MapObject("obj2", "descr2", new Circle(99, 88, 77), 1));
+        mapObjects.add(new MapObject("obj3", "descr2", new Line(99, 88, 77, 10), 1));
+        mapObjects.add(new MapObject("obj4", "descr2", new Ellipse(99, 88, 77, 10), 1));
         //save to database as map
         //save as new map
         Map map = new Map(1, startShirota, startDolgota, endShirota, endDolgota, startX, startY, endX, endY, file);
@@ -189,6 +234,41 @@ public class Controller implements Initializable {
         for (MapObject object: mapObjects) {
             sample.databasemanage.entity.MapObject obj = object.toDbEntity(object, map.getId());
             obj = mapObjectRepo.insert(obj);
+
+            //insert coordinates and radiuses
+            Shape shape = (Shape) object.getShape();
+            if (Utils.isCircle(shape)) {
+                Circle sh = (Circle) object.getShape();
+                Coordinate objCoordinates = new Coordinate(1, obj.getId(), sh.getCenterX(), sh.getCenterY());
+                objCoordinates = coordinateRepo.insert(objCoordinates);
+                Radius radius = new Radius(1, obj.getId(), sh.getRadius(), sh.getRadius());
+                radius = radiusRepo.insert(radius);
+            }
+            else if (Utils.isEllipse(shape)) {
+                Ellipse sh = (Ellipse) object.getShape();
+                Coordinate objCoordinates = new Coordinate(1, obj.getId(), sh.getCenterX(), sh.getCenterY());
+                objCoordinates = coordinateRepo.insert(objCoordinates);
+                Radius radius = new Radius(1, obj.getId(), sh.getRadiusX(), sh.getRadiusY());
+                radius = radiusRepo.insert(radius);
+            }
+            else if (Utils.isLine(shape)) {
+                Line sh = (Line) object.getShape();
+                Coordinate objCoordinates = new Coordinate(1, obj.getId(), sh.getStartX(), sh.getStartY());
+                coordinateRepo.insert(objCoordinates);
+                objCoordinates = new Coordinate(1, obj.getId(), sh.getEndX(), sh.getEndY());
+                coordinateRepo.insert(objCoordinates);
+            }
+            else if (Utils.isRectangle(shape)) {
+                Rectangle sh = (Rectangle) object.getShape();
+                Coordinate objCoord1 = new Coordinate(1, obj.getId(), sh.getX(), sh.getY());
+                Coordinate objCoord2 = new Coordinate(1, obj.getId(), sh.getX() + sh.getWidth(), sh.getY());
+                Coordinate objCoord3 = new Coordinate(1, obj.getId(), sh.getX(), sh.getY() - sh.getHeight());
+                Coordinate objCoord4 = new Coordinate(1, obj.getId(), sh.getX() + sh.getWidth(), sh.getY() - sh.getHeight());
+                coordinateRepo.insert(objCoord1);
+                coordinateRepo.insert(objCoord2);
+                coordinateRepo.insert(objCoord3);
+                coordinateRepo.insert(objCoord4);
+            }
         }
         return true;
     }
@@ -411,14 +491,14 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-//        try {
-//            coordinateRepo = new CoordinateRepo();
-//            mapObjectRepo = new MapObjectRepo();
-//            radiusRepo = new RadiusRepo();
-//            mapRepo = new MapRepo();
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            coordinateRepo = new CoordinateRepo();
+            mapObjectRepo = new MapObjectRepo();
+            radiusRepo = new RadiusRepo();
+            mapRepo = new MapRepo();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
         pane.addEventHandler(MouseEvent.MOUSE_DRAGGED,mouseDraggedHandler);
         pane.addEventHandler(MouseEvent.MOUSE_RELEASED,mouseReleaseHandler);
