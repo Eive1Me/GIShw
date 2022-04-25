@@ -40,6 +40,8 @@
           <Button fx:id="boopBTN" mnemonicParsing="false" onAction="#ellipsis" text="ellipsis" />
             <Button fx:id="boopBTN1" layoutX="168.0" layoutY="13.0" mnemonicParsing="false" onAction="#line" text="line" />
             <Button fx:id="boopBTN11" layoutX="220.0" layoutY="13.0" mnemonicParsing="false" onAction="#wierdLine" text="wierd" />
+            <Button fx:id="boopBTN2" layoutX="168.0" layoutY="13.0" mnemonicParsing="false" onAction="#rectangle" text="rectangle" />
+            <Button fx:id="boopBTN112" layoutX="263.0" layoutY="13.0" mnemonicParsing="false" onAction="#wierdRectangle" text="wierd2" />
             <Button fx:id="boopBTN111" layoutX="272.0" layoutY="13.0" mnemonicParsing="false" onAction="#manageCoords" text="coords" />
         </items>
       </ToolBar>

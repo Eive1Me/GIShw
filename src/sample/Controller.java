@@ -16,10 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Ellipse;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Polyline;
+import javafx.scene.shape.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import sample.databasemanage.entity.Map;
@@ -343,7 +340,73 @@ public class Controller implements Initializable {
     }
 
     public void rectangle(){
+        removeHandlers();
+        final Coords[] start = new Coords[1];
+        final Coords[] end = new Coords[1];
+        final Rectangle[] rectangles = new Rectangle[1];
+        try {
+            mousePressedHandler = event -> {
+                rectangles[0] = new Rectangle();
+                rectangles[0].setFill(Color.TRANSPARENT);
+                rectangles[0].setStrokeWidth(1.0);
+                rectangles[0].setStroke(Color.BLACK);
+                start[0] = new Coords(event.getX(), event.getY());
+                rectangles[0].setX(start[0].x);
+                rectangles[0].setY(start[0].y);
+                rectangles[0].setWidth(1.0);
+                rectangles[0].setHeight(1.0);
+                pane.getChildren().add(rectangles[0]);
+            };
 
+            mouseDraggedHandler = event -> {
+                rectangles[0].setWidth(start[0].xDist(new Coords(event.getX(),event.getY())));
+                rectangles[0].setHeight(start[0].yDist(new Coords(event.getX(),event.getY())));
+            };
+
+            mouseReleaseHandler = event -> {
+                end[0] = new Coords(event.getX(), event.getY());
+                rectangles[0].setWidth(start[0].xDist(end[0]));
+                rectangles[0].setHeight(start[0].yDist(end[0]));
+            };
+
+            mouseClickHandler = event -> {
+            };
+
+            pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
+            pane.addEventHandler(MouseEvent.MOUSE_DRAGGED,mouseDraggedHandler);
+            pane.addEventHandler(MouseEvent.MOUSE_RELEASED,mouseReleaseHandler);
+        } catch (IllegalArgumentException ignored){}
+    }
+
+    public void wierdRectangle(){
+        removeHandlers();
+        List<Coords> coordsArr = new ArrayList<>();
+        final Polygon[] line = new Polygon[1];
+        try {
+            mousePressedHandler = event -> {};
+
+            mouseDraggedHandler = event -> {};
+
+            mouseClickHandler = event -> {
+                if (event.isPrimaryButtonDown()) {
+                    coordsArr.add(new Coords(event.getX(), event.getY()));
+                    if (coordsArr.size() == 1){
+                        line[0] = new Polygon();
+                        line[0].setFill(Color.TRANSPARENT);
+                        line[0].setStrokeWidth(1.0);
+                        line[0].setStroke(Color.BLACK);
+                        pane.getChildren().add(line[0]);
+                    }
+                    line[0].getPoints().addAll(event.getX(), event.getY());
+                } else if (event.isSecondaryButtonDown()) {
+                    coordsArr.clear();
+                }
+            };
+
+            mouseReleaseHandler = event -> {};
+
+            pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mouseClickHandler);
+        } catch (IllegalArgumentException ignored){}
     }
 
     @Override
