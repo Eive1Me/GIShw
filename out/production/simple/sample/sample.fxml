@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.canvas.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
@@ -22,6 +23,7 @@
           </Menu>
             <Menu mnemonicParsing="false" text="Фигуры">
               <items>
+                  <MenuItem mnemonicParsing="false" text="Линия" />
                 <MenuItem mnemonicParsing="false" text="Круг" />
                   <MenuItem mnemonicParsing="false" text="Прямоугольник" />
                   <MenuItem mnemonicParsing="false" text="Треугольник" />
@@ -31,17 +33,21 @@
       </MenuBar>
    </top>
    <bottom>
-      <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #BBBBBB;" BorderPane.alignment="CENTER">
         <items>
             <Label fx:id="coordsLbl" prefHeight="25.0" prefWidth="100.0" text="0;0" />
             <Label fx:id="coordsLbl1" layoutX="10.0" layoutY="13.0" prefHeight="25.0" prefWidth="50.0" text="Coords:" />
-          <Button fx:id="boopBTN" mnemonicParsing="false" onAction="#manageCoords" text="BOOP" />
+          <Button fx:id="boopBTN" mnemonicParsing="false" onAction="#ellipsis" text="ellipsis" />
+            <Button fx:id="boopBTN1" layoutX="168.0" layoutY="13.0" mnemonicParsing="false" onAction="#line" text="line" />
+            <Button fx:id="boopBTN11" layoutX="220.0" layoutY="13.0" mnemonicParsing="false" onAction="#wierdLine" text="wierd" />
+            <Button fx:id="boopBTN111" layoutX="272.0" layoutY="13.0" mnemonicParsing="false" onAction="#manageCoords" text="coords" />
         </items>
       </ToolBar>
    </bottom>
    <center>
-      <AnchorPane fx:id="pane" onMouseMoved="#setCoords" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <AnchorPane fx:id="pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseMoved="#setCoords" style="-fx-background-color: #AAAAAA;" BorderPane.alignment="CENTER">
          <children>
+            <Canvas height="335.0" width="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             <ImageView fx:id="imgView" fitHeight="335.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </children>
       </AnchorPane>

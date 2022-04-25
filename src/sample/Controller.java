@@ -1,6 +1,8 @@
 package sample;
 
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -9,9 +11,15 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polyline;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import sample.databasemanage.entity.Map;
@@ -29,6 +37,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -217,6 +226,126 @@ public class Controller implements Initializable {
         coordsLbl.setText(new Coords(e.getSceneX(), e.getSceneY()-25).toString());
     }
 
+    //==========================drawing obj==============================
+
+    EventHandler<MouseEvent> mousePressedHandler = mouseEvent -> {},
+                             mouseDraggedHandler = mouseEvent -> {},
+                             mouseReleaseHandler = mouseEvent -> {},
+                             mouseClickHandler = mouseEvent -> {};
+
+    public void removeHandlers(){
+        pane.removeEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
+        pane.removeEventHandler(MouseEvent.MOUSE_DRAGGED,mouseDraggedHandler);
+        pane.removeEventHandler(MouseEvent.MOUSE_RELEASED,mouseReleaseHandler);
+        pane.removeEventHandler(MouseEvent.MOUSE_CLICKED,mouseClickHandler);
+        pane.removeEventHandler(MouseEvent.MOUSE_PRESSED,mouseClickHandler);
+    }
+
+
+    public void line(){
+        removeHandlers();
+        final Coords[] start = new Coords[1];
+        final Coords[] end = new Coords[1];
+        final Line[] line = new Line[1];
+        try {
+            mousePressedHandler = event -> {
+                start[0] = new Coords(event.getX(), event.getY());
+                line[0] = new Line(start[0].x, start[0].y, start[0].x, start[0].y);
+                pane.getChildren().add(line[0]);
+            };
+
+            mouseDraggedHandler = event -> {
+                line[0].setEndX(event.getX());
+                line[0].setEndY(event.getY());
+            };
+
+            mouseClickHandler = event -> {};
+
+            mouseReleaseHandler = event -> {
+                end[0] = new Coords(event.getX(), event.getY());
+                line[0].setEndX(end[0].x);
+                line[0].setEndY(end[0].y);
+            };
+
+            pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
+            pane.addEventHandler(MouseEvent.MOUSE_DRAGGED,mouseDraggedHandler);
+            pane.addEventHandler(MouseEvent.MOUSE_RELEASED,mouseReleaseHandler);
+        } catch (IllegalArgumentException ignored){}
+    }
+
+    public void ellipsis(){
+        removeHandlers();
+        final Coords[] start = new Coords[1];
+        final Coords[] end = new Coords[1];
+        final Ellipse[] ellipses = new Ellipse[1];
+        try {
+            mousePressedHandler = event -> {
+                ellipses[0] = new Ellipse();
+                ellipses[0].setFill(Color.TRANSPARENT);
+                ellipses[0].setStrokeWidth(1.0);
+                ellipses[0].setStroke(Color.BLACK);
+                start[0] = new Coords(event.getX(), event.getY());
+                ellipses[0].setCenterX(start[0].x);
+                ellipses[0].setCenterY(start[0].y);
+                ellipses[0].setRadiusX(1.0);
+                ellipses[0].setRadiusY(1.0);
+                pane.getChildren().add(ellipses[0]);
+            };
+
+            mouseDraggedHandler = event -> {
+                ellipses[0].setCenterX(start[0].x + start[0].xDist(new Coords(event.getX(),event.getY()))/2);
+                ellipses[0].setCenterY(start[0].y + start[0].yDist(new Coords(event.getX(),event.getY()))/2);
+                ellipses[0].setRadiusX(start[0].xDist(new Coords(event.getX(),event.getY()))/2);
+                ellipses[0].setRadiusY(start[0].yDist(new Coords(event.getX(),event.getY()))/2);
+            };
+
+            mouseReleaseHandler = event -> {
+                end[0] = new Coords(event.getX(), event.getY());
+                ellipses[0].setRadiusX(start[0].xDist(end[0])/2);
+                ellipses[0].setRadiusY(start[0].yDist(end[0])/2);
+            };
+
+            mouseClickHandler = event -> {
+            };
+
+            pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
+            pane.addEventHandler(MouseEvent.MOUSE_DRAGGED,mouseDraggedHandler);
+            pane.addEventHandler(MouseEvent.MOUSE_RELEASED,mouseReleaseHandler);
+        } catch (IllegalArgumentException ignored){}
+    }
+
+    public void wierdLine(){
+        removeHandlers();
+        List<Coords> coordsArr = new ArrayList<>();
+        final Polyline[] line = new Polyline[1];
+        try {
+            mousePressedHandler = event -> {};
+
+            mouseDraggedHandler = event -> {};
+
+            mouseClickHandler = event -> {
+                if (event.isPrimaryButtonDown()) {
+                    coordsArr.add(new Coords(event.getX(), event.getY()));
+                    if (coordsArr.size() == 1){
+                        line[0] = new Polyline();
+                        pane.getChildren().add(line[0]);
+                    }
+                    line[0].getPoints().addAll(event.getX(), event.getY());
+                } else if (event.isSecondaryButtonDown()) {
+                    coordsArr.clear();
+                }
+            };
+
+            mouseReleaseHandler = event -> {};
+
+            pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mouseClickHandler);
+        } catch (IllegalArgumentException ignored){}
+    }
+
+    public void rectangle(){
+
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 //        try {
@@ -227,7 +356,13 @@ public class Controller implements Initializable {
 //        } catch (SQLException e) {
 //            throw new RuntimeException(e);
 //        }
-
+        pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
+        pane.addEventHandler(MouseEvent.MOUSE_DRAGGED,mouseDraggedHandler);
+        pane.addEventHandler(MouseEvent.MOUSE_RELEASED,mouseReleaseHandler);
+        pane.addEventHandler(MouseEvent.MOUSE_CLICKED,mouseClickHandler);
+        imgView.fitWidthProperty().bind(pane.widthProperty());
+        imgView.fitHeightProperty().bind(pane.heightProperty());
+        pane.autosize();
     }
 
 }
