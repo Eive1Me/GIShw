@@ -182,6 +182,17 @@ public class Controller implements Initializable {
             img = ImageIO.read(new ByteArrayInputStream(chosenMap.getImage()));
             imgView.setImage(null);
             imgView.setImage(SwingFXUtils.toFXImage(img,null));
+
+            File temp = new File("tempbg.jpg");
+
+            try {
+                ImageIO.write(img, "png", temp);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            file = temp;
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -247,11 +258,15 @@ public class Controller implements Initializable {
         }
     }
 
+    //TEST POLYLINE - DELETE
+    Polygon debugPolygon;
     public boolean saveToDatabase() throws IOException {
-        mapObjects.add(new MapObject("obj", "descr", new Rectangle(99, 88, 77, 66), 1));
-        mapObjects.add(new MapObject("obj2", "descr2", new Circle(99, 88, 77), 1));
-        mapObjects.add(new MapObject("obj3", "descr2", new Line(99, 88, 77, 10), 1));
-        mapObjects.add(new MapObject("obj4", "descr2", new Ellipse(99, 88, 77, 10), 1));
+        //filler debug data - delete
+//        mapObjects.add(new MapObject("obj", "descr", new Rectangle(99, 88, 77, 66), 1));
+//        mapObjects.add(new MapObject("obj2", "descr2", new Circle(99, 88, 77), 1));
+//        mapObjects.add(new MapObject("obj3", "descr2", new Line(99, 88, 77, 10), 1));
+//        mapObjects.add(new MapObject("obj4", "descr2", new Ellipse(99, 88, 77, 10), 1));
+//        mapObjects.add(new MapObject("objPOLYgon", "POLYGON!!!!!!", debugPolygon, 1));
         //save to database as map
         //save as new map
         Map map = new Map(1, startShirota, startDolgota, endShirota, endDolgota, startX, startY, endX, endY, file);
@@ -293,6 +308,22 @@ public class Controller implements Initializable {
                 coordinateRepo.insert(objCoord2);
                 coordinateRepo.insert(objCoord3);
                 coordinateRepo.insert(objCoord4);
+            }
+            else if (Utils.isPolyline(shape)) {
+                Polyline sh = (Polyline) object.getShape();
+                Double[] points = sh.getPoints().toArray(new Double[0]);
+                for (int i = 0; i < points.length; i = i + 2) {
+                    Coordinate coord = new Coordinate(1, obj.getId(), points[i], points[i+1]);
+                    coordinateRepo.insert(coord);
+                }
+            }
+            else if (Utils.isPolygon(shape)) {
+                Polygon sh = (Polygon) object.getShape();
+                Double[] points = sh.getPoints().toArray(new Double[0]);
+                for (int i = 0; i < points.length; i = i + 2) {
+                    Coordinate coord = new Coordinate(1, obj.getId(), points[i], points[i+1]);
+                    coordinateRepo.insert(coord);
+                }
             }
         }
         return true;
@@ -415,6 +446,44 @@ public class Controller implements Initializable {
         } catch (IllegalArgumentException ignored){}
     }
 
+    public void circle(){
+        removeHandlers();
+        final Coords[] start = new Coords[1];
+        final Coords[] end = new Coords[1];
+        final Circle[] circles = new Circle[1];
+        try {
+            mousePressedHandler = event -> {
+                circles[0] = new Circle();
+                circles[0].setFill(Color.TRANSPARENT);
+                circles[0].setStrokeWidth(1.0);
+                circles[0].setStroke(Color.BLACK);
+                start[0] = new Coords(event.getX(), event.getY());
+                circles[0].setRadius(1.0);
+                circles[0].setCenterX(start[0].x);
+                circles[0].setCenterY(start[0].y);
+                pane.getChildren().add(circles[0]);
+            };
+
+            mouseDraggedHandler = event -> {
+                circles[0].setCenterX(start[0].x + start[0].xDist(new Coords(event.getX(),event.getY()))/2);
+                circles[0].setCenterY(start[0].y + start[0].yDist(new Coords(event.getX(),event.getY()))/2);
+                circles[0].setRadius(start[0].distanceTo(new Coords(event.getX(),event.getY()))/2);
+            };
+
+            mouseReleaseHandler = event -> {
+                end[0] = new Coords(event.getX(), event.getY());
+                circles[0].setRadius(start[0].distanceTo(end[0])/2);
+            };
+
+            mouseClickHandler = event -> {
+            };
+
+            pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
+            pane.addEventHandler(MouseEvent.MOUSE_DRAGGED,mouseDraggedHandler);
+            pane.addEventHandler(MouseEvent.MOUSE_RELEASED,mouseReleaseHandler);
+        } catch (IllegalArgumentException ignored){}
+    }
+
     public void wierdLine(){
         removeHandlers();
         List<Coords> coordsArr = new ArrayList<>();
@@ -432,10 +501,17 @@ public class Controller implements Initializable {
                         pane.getChildren().add(line[0]);
                     }
                     line[0].getPoints().addAll(event.getX(), event.getY());
+
+
+//                    System.out.println("_____POLYLINE SAVING");
+//                    /////////////debug polyline saving
+//                    debugPolyline = line[0];
+//                    ///////////////////
                 } else if (event.isSecondaryButtonDown()) {
                     coordsArr.clear();
                 }
             };
+
 
             mouseReleaseHandler = event -> {};
 
@@ -502,6 +578,12 @@ public class Controller implements Initializable {
                         pane.getChildren().add(line[0]);
                     }
                     line[0].getPoints().addAll(event.getX(), event.getY());
+
+
+                    System.out.println("_____POLYLINE SAVING");
+                    /////////////debug polyline saving
+                    debugPolygon = line[0];
+                    ///////////////////
                 } else if (event.isSecondaryButtonDown()) {
                     coordsArr.clear();
                 }
@@ -511,6 +593,10 @@ public class Controller implements Initializable {
 
             pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mouseClickHandler);
         } catch (IllegalArgumentException ignored){}
+    }
+
+    public void cursor(){
+        removeHandlers();
     }
 
     @Override

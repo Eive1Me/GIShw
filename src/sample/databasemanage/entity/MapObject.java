@@ -159,6 +159,7 @@ public class MapObject {
         RECTANGLE,
         POLYGON,
         CIRCLE,
-        ELLIPSE
+        ELLIPSE,
+        POLYLINE
     }
 }

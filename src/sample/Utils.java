@@ -17,6 +17,8 @@ public class Utils {
         if (className.contains("Line")) return MapObject.Shape.LINE;
         if (className.contains("Path")) return MapObject.Shape.PATH;
         if (className.contains("Ellipse")) return MapObject.Shape.ELLIPSE;
+        if (className.contains("Polyline")) return MapObject.Shape.POLYLINE;
+        if (className.contains("Polygon")) return MapObject.Shape.POLYGON;
         return null;
     }
 
@@ -40,6 +42,18 @@ public class Utils {
 
     public static boolean isRectangle(Shape shape) {
         if (toShape(shape.getClass().getName()) == MapObject.Shape.RECTANGLE)
+            return true;
+        return false;
+    }
+
+    public static boolean isPolyline(Shape shape) {
+        if (toShape(shape.getClass().getName()) == MapObject.Shape.POLYLINE)
+            return true;
+        return false;
+    }
+
+    public static boolean isPolygon(Shape shape) {
+        if (toShape(shape.getClass().getName()) == MapObject.Shape.POLYGON)
             return true;
         return false;
     }
