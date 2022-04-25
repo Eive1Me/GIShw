@@ -2,7 +2,9 @@ package sample;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -12,6 +14,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import sample.databasemanage.entity.Coordinate;
 import sample.databasemanage.entity.Map;
 import sample.databasemanage.entity.Radius;
@@ -127,10 +130,34 @@ public class Controller implements Initializable {
 
         System.out.println(mapObjects.size());
         System.out.println(mapObjects.get(0).getName());
+        System.out.println(mapObjects.get(0).getShape().getClass().getName());
         System.out.println(mapObjects.get(1).getName());
+        System.out.println(mapObjects.get(1).getShape().getClass().getName());
         System.out.println(mapObjects.get(2).getName());
+        System.out.println(mapObjects.get(2).getShape().getClass().getName());
         System.out.println(mapObjects.get(3).getName());
+        System.out.println(mapObjects.get(3).getShape().getClass().getName());
         return true;
+    }
+
+    public Stage openObjectTable() throws IOException {
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource(
+                        "map_object_table.fxml"
+                )
+        );
+
+        Stage stage = new Stage(StageStyle.DECORATED);
+        stage.setScene(
+                new Scene(loader.load())
+        );
+
+        ObjectTableController controller = loader.getController();
+        controller.initData(mapObjects);
+
+        stage.show();
+
+        return stage;
     }
 
     public boolean saveToDatabase() throws IOException {

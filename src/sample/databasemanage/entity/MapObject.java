@@ -1,5 +1,6 @@
 package sample.databasemanage.entity;
 
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
 
 import java.util.ArrayList;
@@ -31,10 +32,12 @@ public class MapObject {
         result.setLayer(this.getLayer());
         switch (this.getShape()) {
             case LINE: {
-                result.setShape(new Line(coords.get(0).getX(), coords.get(0).getY(), coords.get(1).getX(), coords.get(1).getY()));
+                result.setShape(new Line(coords.get(0).getX(), coords.get(0).getY(), coords.get(1).getX(), coords.get(1).getY())); break;
             }
             case RECTANGLE: {
-                result.setShape(new Rectangle(coords.get(0).getX(), coords.get(0).getY(), coords.get(1).getX() - coords.get(0).getX(), coords.get(0).getY() - coords.get(1).getY()));
+                Rectangle rectangle = new Rectangle(coords.get(0).getX(), coords.get(0).getY(), coords.get(1).getX() - coords.get(0).getX(), coords.get(0).getY() - coords.get(1).getY());
+                rectangle.setFill(Paint.valueOf(this.getColor()));
+                result.setShape(rectangle); break;
             }
         }
         return result;
@@ -47,10 +50,14 @@ public class MapObject {
         result.setLayer(this.getLayer());
         switch (this.getShape()) {
             case CIRCLE: {
-                result.setShape(new Circle(coords.get(0).getX(), coords.get(0).getY(), radius.getValueX()));
+                result.setShape(new Circle(coords.get(0).getX(), coords.get(0).getY(), radius.getValueX(), Paint.valueOf(this.getColor())));
+                break;
             }
             case ELLIPSE: {
-                result.setShape(new Ellipse(coords.get(0).getX(), coords.get(0).getY(), radius.getValueX(), radius.getValueY()));
+                Ellipse el = new Ellipse(coords.get(0).getX(), coords.get(0).getY(), radius.getValueX(), radius.getValueY());
+                el.setFill(Paint.valueOf(this.getColor()));
+                result.setShape(el);
+                break;
             }
         }
         return result;
@@ -59,7 +66,6 @@ public class MapObject {
     public MapObject toDbEntity(sample.entities.MapObject object, Integer mapID) {
         MapObject entity = new MapObject();
         javafx.scene.shape.Shape sh = (javafx.scene.shape.Shape) object.getShape();
-        System.out.println(sh.getClass().toString());
         switch (sh.getClass().toString()) {
             case "javafx.scene.shape.Circle": {
                 entity.setShape(Shape.CIRCLE);
