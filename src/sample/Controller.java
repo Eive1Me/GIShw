@@ -415,6 +415,44 @@ public class Controller implements Initializable {
         } catch (IllegalArgumentException ignored){}
     }
 
+    public void circle(){
+        removeHandlers();
+        final Coords[] start = new Coords[1];
+        final Coords[] end = new Coords[1];
+        final Circle[] circles = new Circle[1];
+        try {
+            mousePressedHandler = event -> {
+                circles[0] = new Circle();
+                circles[0].setFill(Color.TRANSPARENT);
+                circles[0].setStrokeWidth(1.0);
+                circles[0].setStroke(Color.BLACK);
+                start[0] = new Coords(event.getX(), event.getY());
+                circles[0].setRadius(1.0);
+                circles[0].setCenterX(start[0].x);
+                circles[0].setCenterY(start[0].y);
+                pane.getChildren().add(circles[0]);
+            };
+
+            mouseDraggedHandler = event -> {
+                circles[0].setCenterX(start[0].x + start[0].xDist(new Coords(event.getX(),event.getY()))/2);
+                circles[0].setCenterY(start[0].y + start[0].yDist(new Coords(event.getX(),event.getY()))/2);
+                circles[0].setRadius(start[0].distanceTo(new Coords(event.getX(),event.getY()))/2);
+            };
+
+            mouseReleaseHandler = event -> {
+                end[0] = new Coords(event.getX(), event.getY());
+                circles[0].setRadius(start[0].distanceTo(end[0])/2);
+            };
+
+            mouseClickHandler = event -> {
+            };
+
+            pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
+            pane.addEventHandler(MouseEvent.MOUSE_DRAGGED,mouseDraggedHandler);
+            pane.addEventHandler(MouseEvent.MOUSE_RELEASED,mouseReleaseHandler);
+        } catch (IllegalArgumentException ignored){}
+    }
+
     public void wierdLine(){
         removeHandlers();
         List<Coords> coordsArr = new ArrayList<>();
@@ -511,6 +549,10 @@ public class Controller implements Initializable {
 
             pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mouseClickHandler);
         } catch (IllegalArgumentException ignored){}
+    }
+
+    public void cursor(){
+        removeHandlers();
     }
 
     @Override
