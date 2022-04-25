@@ -6,6 +6,8 @@ import sample.databasemanage.entity.Coordinate;
 import sample.databasemanage.entity.Map;
 import sample.databasemanage.entity.MapObject;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.logging.Logger;
 public class MapRepo implements IRestRepository<Map> {
     String url = "jdbc:postgresql://localhost:5432/gis";
     String user = "postgres";
-    String password = "15968";
+    String password = "123";
     Connection con;
 
     private static String selectQuery = "SELECT \"id\",  \"start_shirota\", \"start_dolgota\", \"end_shirota\", \"end_dolgota\", \"start_x\", \"start_y\", \"end_x\", \"end_y\", \"image\"  " +
@@ -99,7 +101,9 @@ public class MapRepo implements IRestRepository<Map> {
             pst.setDouble(6, entity.getStartY());
             pst.setDouble(7, entity.getEndX());
             pst.setDouble(8, entity.getEndY());
-            pst.setBytes(9, entity.getImage());
+
+            FileInputStream fis = new FileInputStream(entity.getFileImage());
+            pst.setBinaryStream(9, fis, (int)entity.getFileImage().length());
             ResultSet result = pst.executeQuery();
             System.out.println("Successfully created.");
             while (result.next()) return new Map(result.getInt(1),
@@ -113,6 +117,8 @@ public class MapRepo implements IRestRepository<Map> {
 
             Logger lgr = Logger.getLogger(MapRepo.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return null;
     }

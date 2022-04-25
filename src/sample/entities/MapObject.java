@@ -20,6 +20,10 @@ public class MapObject {
         this.layer = layer;
     }
 
+    public MapObject() {
+
+    }
+
     public sample.databasemanage.entity.MapObject toDbEntity(sample.entities.MapObject object, Integer mapID) {
         sample.databasemanage.entity.MapObject entity = new sample.databasemanage.entity.MapObject();
         javafx.scene.shape.Shape sh = (javafx.scene.shape.Shape) object.getShape();
@@ -27,7 +31,8 @@ public class MapObject {
         entity.setShape(Utils.toShape(sh.getClass().getName()));
         entity.setName(object.getName());
         entity.setDescription(object.getDescription());
-        entity.setColor(sh.getFill().toString());
+        if (sh.getFill() != null)
+                entity.setColor(sh.getFill().toString());
         entity.setLayer(1);
         entity.setMapID(mapID);
 

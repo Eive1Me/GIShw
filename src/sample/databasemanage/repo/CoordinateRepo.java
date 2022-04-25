@@ -13,20 +13,24 @@ import java.util.logging.Logger;
 public class CoordinateRepo implements IRestRepository<Coordinate> {
     String url = "jdbc:postgresql://localhost:5432/gis";
     String user = "postgres";
-    String password = "15968";
+    String password = "123";
     Connection con;
 
-    private static String selectQuery = "SELECT \"id\", \"object_id\", \"x\", \"y\" " +
+    private static String selectQuery = "SELECT \"id\", \"object_id\", \"value_x\", \"value_y\" " +
             "FROM \"coordinate\" " +
             "ORDER BY \"id\"";
 
-    private static String selectByIdQuery = "SELECT \"id\",  \"object_id\", \"x\", \"y\" " +
+    private static String selectByIdQuery = "SELECT \"id\",  \"object_id\", \"value_x\", \"value_y\" " +
             "FROM \"coordinate\" " +
             "WHERE \"id\" = ?";
 
-    private static String insertQuery = "INSERT INTO \"coordinate\"( \"object_id\", \"x\", \"y\") " +
-            "VALUES (?, ?, ?, ?) " +
-            "RETURNING \"id\",  \"object_id\", \"x\", \"y\" ";
+    private static String selectByObjectIdQuery = "SELECT \"id\",  \"object_id\", \"value_x\", \"value_y\" " +
+            "FROM \"coordinate\" " +
+            "WHERE \"object_id\" = ?";
+
+    private static String insertQuery = "INSERT INTO \"coordinate\"( \"object_id\", \"value_x\", \"value_y\") " +
+            "VALUES (?, ?, ?) " +
+            "RETURNING \"id\",  \"object_id\", \"value_x\", \"value_y\" ";
 
 //    private static String updateQuery = "UPDATE \"order\" " +
 //            "SET \"client_id\" = ?, \"item_id\" = ?, \"work_id\" = ?, \"accessory_id\" = ?, \"payment\" = ?, \"prepayment\" = ?, \"order_date\" = ?, \"deadline\" = ?, \"status\" = ? " +
@@ -35,7 +39,7 @@ public class CoordinateRepo implements IRestRepository<Coordinate> {
 
     private static String deleteQuery = "DELETE FROM \"coordinate\" " +
             "WHERE \"id\" = ? " +
-            "RETURNING \"id\", \"object_id\", \"x\", \"y\" ";
+            "RETURNING \"id\", \"object_id\", \"value_x\", \"value_y\" ";
 
     public CoordinateRepo() throws SQLException {
         con = DriverManager.getConnection(url, user, password);
@@ -66,6 +70,23 @@ public class CoordinateRepo implements IRestRepository<Coordinate> {
             ResultSet result = pst.executeQuery();
             System.out.println("Successfully selected.");
             while (result.next()) return new Coordinate(result.getInt(1), result.getInt(2), result.getDouble(3), result.getDouble(4));
+
+        } catch (SQLException ex) {
+
+            Logger lgr = Logger.getLogger(CoordinateRepo.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return null;
+    }
+
+    public ArrayList<Coordinate> selectByObjectId(Integer id) {
+        try (PreparedStatement pst = con.prepareStatement(selectByObjectIdQuery)) {
+            pst.setInt(1, id);
+            ResultSet result = pst.executeQuery();
+            System.out.println("Successfully selected.");
+            ArrayList<Coordinate> objects = new ArrayList<>();
+            while (result.next()) objects.add(new Coordinate(result.getInt(1), result.getInt(2), result.getDouble(3), result.getDouble(4)));
+            return objects;
 
         } catch (SQLException ex) {
 

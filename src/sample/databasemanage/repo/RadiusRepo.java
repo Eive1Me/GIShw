@@ -14,20 +14,24 @@ import java.util.logging.Logger;
 public class RadiusRepo implements IRestRepository<Radius> {
     String url = "jdbc:postgresql://localhost:5432/gis";
     String user = "postgres";
-    String password = "15968";
+    String password = "123";
     Connection con;
 
-    private static String selectQuery = "SELECT \"id\", \"object_id\", \"x\", \"y\", \"value\" " +
+    private static String selectQuery = "SELECT \"id\", \"object_id\", \"value_x\", \"value_y\" " +
             "FROM \"radius\" " +
             "ORDER BY \"id\"";
 
-    private static String selectByIdQuery = "SELECT \"id\",  \"object_id\", \"x\", \"y\", \"value\" " +
+    private static String selectByIdQuery = "SELECT \"id\",  \"object_id\", \"value_x\", \"value_y\" " +
             "FROM \"radius\" " +
             "WHERE \"id\" = ?";
 
-    private static String insertQuery = "INSERT INTO \"radius\"( \"object_id\", \"x\", \"y\", \"value\") " +
-            "VALUES (?, ?, ?, ?) " +
-            "RETURNING \"id\",  \"object_id\", \"x\", \"y\", \"value\" ";
+    private static String selectByObjectIdQuery = "SELECT \"id\",  \"object_id\", \"value_x\", \"value_y\" " +
+            "FROM \"radius\" " +
+            "WHERE \"object_id\" = ?";
+
+    private static String insertQuery = "INSERT INTO \"radius\"( \"object_id\", \"value_x\", \"value_y\") " +
+            "VALUES (?, ?, ?) " +
+            "RETURNING \"id\",  \"object_id\", \"value_x\", \"value_y\"";
 
 //    private static String updateQuery = "UPDATE \"order\" " +
 //            "SET \"client_id\" = ?, \"item_id\" = ?, \"work_id\" = ?, \"accessory_id\" = ?, \"payment\" = ?, \"prepayment\" = ?, \"order_date\" = ?, \"deadline\" = ?, \"status\" = ? " +
@@ -36,7 +40,7 @@ public class RadiusRepo implements IRestRepository<Radius> {
 
     private static String deleteQuery = "DELETE FROM \"radius\" " +
             "WHERE \"id\" = ? " +
-            "RETURNING \"id\", \"object_id\", \"x\", \"y\", \"value\" ";
+            "RETURNING \"id\", \"object_id\", \"value_x\", \"value_y\" ";
 
     public RadiusRepo() throws SQLException {
         con = DriverManager.getConnection(url, user, password);
@@ -48,7 +52,7 @@ public class RadiusRepo implements IRestRepository<Radius> {
             ResultSet result = pst.executeQuery();
             System.out.println("Successfully selected.");
             ArrayList<Radius> objects = new ArrayList<>();
-            while (result.next()) objects.add(new Radius(result.getInt(1), result.getInt(2), result.getDouble(3), result.getDouble(4), result.getDouble(5)));
+            while (result.next()) objects.add(new Radius(result.getInt(1), result.getInt(2), result.getDouble(3),  result.getDouble(4)));
             return objects;
 
         } catch (SQLException ex) {
@@ -66,7 +70,24 @@ public class RadiusRepo implements IRestRepository<Radius> {
             pst.setInt(1, id);
             ResultSet result = pst.executeQuery();
             System.out.println("Successfully selected.");
-            while (result.next()) return new Radius(result.getInt(1), result.getInt(2), result.getDouble(3), result.getDouble(4), result.getDouble(5));
+            while (result.next()) return new Radius(result.getInt(1), result.getInt(2), result.getDouble(3), result.getDouble(4));
+
+        } catch (SQLException ex) {
+
+            Logger lgr = Logger.getLogger(RadiusRepo.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return null;
+    }
+
+    public ArrayList<Radius> selectByObjectId(Integer id) {
+        try (PreparedStatement pst = con.prepareStatement(selectByObjectIdQuery)) {
+            pst.setInt(1, id);
+            ResultSet result = pst.executeQuery();
+            System.out.println("Successfully selected.");
+            ArrayList<Radius> objects = new ArrayList<>();
+            while (result.next()) objects.add(new Radius(result.getInt(1), result.getInt(2), result.getDouble(3),  result.getDouble(4)));
+            return objects;
 
         } catch (SQLException ex) {
 
@@ -81,11 +102,11 @@ public class RadiusRepo implements IRestRepository<Radius> {
         try (PreparedStatement pst = con.prepareStatement(insertQuery)) {
 
             pst.setInt(1, entity.getObjectID());
-            pst.setDouble(2, entity.getX());
-            pst.setDouble(3, entity.getY());
+            pst.setDouble(2, entity.getValueX());
+            pst.setDouble(3, entity.getValueY());
             ResultSet result = pst.executeQuery();
             System.out.println("Successfully created.");
-            while (result.next()) return new Radius(result.getInt(1), result.getInt(2), result.getDouble(3), result.getDouble(4), result.getDouble(5));
+            while (result.next()) return new Radius(result.getInt(1), result.getInt(2), result.getDouble(3), result.getDouble(4));
 
         } catch (SQLException ex) {
 
@@ -124,7 +145,7 @@ public class RadiusRepo implements IRestRepository<Radius> {
             pst.setInt(1, id);
             ResultSet result = pst.executeQuery();
             System.out.println("Successfully deleted.");
-            while (result.next()) return new Radius(result.getInt(1), result.getInt(2), result.getDouble(3), result.getDouble(4), result.getDouble(5));
+            while (result.next()) return new Radius(result.getInt(1), result.getInt(2), result.getDouble(3), result.getDouble(4));
 
         } catch (SQLException ex) {
 

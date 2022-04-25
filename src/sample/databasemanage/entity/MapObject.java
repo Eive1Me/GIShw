@@ -1,9 +1,8 @@
 package sample.databasemanage.entity;
 
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Ellipse;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.*;
+
+import java.util.ArrayList;
 
 public class MapObject {
     private Integer id;
@@ -14,8 +13,49 @@ public class MapObject {
     private String color;
     private int layer;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public MapObject() {
     }
+
+    public sample.entities.MapObject toObject(ArrayList<Coordinate> coords) {
+        sample.entities.MapObject result = new sample.entities.MapObject();
+        result.setName(this.getName());
+        result.setDescription(this.getDescription());
+        result.setLayer(this.getLayer());
+        switch (this.getShape()) {
+            case LINE: {
+                result.setShape(new Line(coords.get(0).getX(), coords.get(0).getY(), coords.get(1).getX(), coords.get(1).getY()));
+            }
+            case RECTANGLE: {
+                result.setShape(new Rectangle(coords.get(0).getX(), coords.get(0).getY(), coords.get(1).getX() - coords.get(0).getX(), coords.get(0).getY() - coords.get(1).getY()));
+            }
+        }
+        return result;
+    }
+
+    public sample.entities.MapObject toObject(ArrayList<Coordinate> coords, Radius radius) {
+        sample.entities.MapObject result = new sample.entities.MapObject();
+        result.setName(this.getName());
+        result.setDescription(this.getDescription());
+        result.setLayer(this.getLayer());
+        switch (this.getShape()) {
+            case CIRCLE: {
+                result.setShape(new Circle(coords.get(0).getX(), coords.get(0).getY(), radius.getValueX()));
+            }
+            case ELLIPSE: {
+                result.setShape(new Ellipse(coords.get(0).getX(), coords.get(0).getY(), radius.getValueX(), radius.getValueY()));
+            }
+        }
+        return result;
+    }
+
     public MapObject toDbEntity(sample.entities.MapObject object, Integer mapID) {
         MapObject entity = new MapObject();
         javafx.scene.shape.Shape sh = (javafx.scene.shape.Shape) object.getShape();
