@@ -5,14 +5,17 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -34,10 +37,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 
 public class Controller implements Initializable {
@@ -59,7 +59,7 @@ public class Controller implements Initializable {
     BufferedImage img;
 
     //map data
-    ArrayList<MapObject> mapObjects;
+    ArrayList<MapObject> mapObjects = new ArrayList<>();
     Integer startShirota = 5;
     Integer startDolgota = 5;
     Integer endShirota = 0;
@@ -170,7 +170,7 @@ public class Controller implements Initializable {
     public boolean openFromDatabase() throws IOException {
         //retrieve map image
         ArrayList<Map> maps = mapRepo.select();
-        Map chosenMap = maps.get(19);
+        Map chosenMap = maps.get(4);
 
         //retrieve map data
         startShirota = chosenMap.getStartShirota();
@@ -182,6 +182,13 @@ public class Controller implements Initializable {
             img = ImageIO.read(new ByteArrayInputStream(chosenMap.getImage()));
             imgView.setImage(null);
             imgView.setImage(SwingFXUtils.toFXImage(img,null));
+            File temp = new File("tempbg.jpg");
+            try {
+                ImageIO.write(img, "jpg", temp);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            file = temp;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -201,6 +208,8 @@ public class Controller implements Initializable {
                 mapObjects.add(objDB.toObject(coords));
         }
 
+        drawObjects();
+
         System.out.println(mapObjects.size());
         System.out.println(mapObjects.get(0).getName());
         System.out.println(mapObjects.get(0).getShape().getClass().getName());
@@ -211,6 +220,25 @@ public class Controller implements Initializable {
         System.out.println(mapObjects.get(3).getName());
         System.out.println(mapObjects.get(3).getShape().getClass().getName());
         return true;
+    }
+
+    public void drawObjects(){
+        for (MapObject a:mapObjects) {
+//            if (Utils.isCircle((Shape) a.getShape())) {
+//                pane.getChildren().add(a.getShape());
+//            } else if (Utils.isEllipse((Shape) a.getShape())){
+//
+//            } else if (Utils.isLine((Shape) a.getShape())){
+//
+//            } else if (Utils.isRectangle((Shape) a.getShape())){
+//
+//            } else {}
+            Shape shape = (Shape) a.getShape();
+            shape.setFill(Color.TRANSPARENT);
+            shape.setStrokeWidth(1.0);
+            shape.setStroke(Color.BLACK);
+            pane.getChildren().add(shape);
+        }
     }
 
     public Stage openObjectTable() throws IOException {
@@ -366,6 +394,9 @@ public class Controller implements Initializable {
                 end[0] = new Coords(event.getX(), event.getY());
                 line[0].setEndX(end[0].x);
                 line[0].setEndY(end[0].y);
+                String[] result;
+                result = getValues("Линия","Расстояние");
+                addToList(result[0],result[1],line[0]);
             };
 
             pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
@@ -404,6 +435,9 @@ public class Controller implements Initializable {
                 end[0] = new Coords(event.getX(), event.getY());
                 ellipses[0].setRadiusX(start[0].xDist(end[0])/2);
                 ellipses[0].setRadiusY(start[0].yDist(end[0])/2);
+                String[] result;
+                result = getValues("Озеро","Территория");
+                addToList(result[0],result[1],ellipses[0]);
             };
 
             mouseClickHandler = event -> {
@@ -442,6 +476,9 @@ public class Controller implements Initializable {
             mouseReleaseHandler = event -> {
                 end[0] = new Coords(event.getX(), event.getY());
                 circles[0].setRadius(start[0].distanceTo(end[0])/2);
+                String[] result;
+                result = getValues("Круг","Территория");
+                addToList(result[0],result[1],circles[0]);
             };
 
             mouseClickHandler = event -> {
@@ -472,6 +509,9 @@ public class Controller implements Initializable {
                     line[0].getPoints().addAll(event.getX(), event.getY());
                 } else if (event.isSecondaryButtonDown()) {
                     coordsArr.clear();
+                    String[] result;
+                    result = getValues("Путь","Дорога");
+                    addToList(result[0],result[1],line[0]);
                 }
             };
 
@@ -509,6 +549,9 @@ public class Controller implements Initializable {
                 end[0] = new Coords(event.getX(), event.getY());
                 rectangles[0].setWidth(start[0].xDist(end[0]));
                 rectangles[0].setHeight(start[0].yDist(end[0]));
+                String[] result;
+                result = getValues("Прямоугольник","Здание");
+                addToList(result[0],result[1],rectangles[0]);
             };
 
             mouseClickHandler = event -> {
@@ -542,6 +585,9 @@ public class Controller implements Initializable {
                     line[0].getPoints().addAll(event.getX(), event.getY());
                 } else if (event.isSecondaryButtonDown()) {
                     coordsArr.clear();
+                    String[] result;
+                    result = getValues("Многоугольник","Территория");
+                    addToList(result[0],result[1],line[0]);
                 }
             };
 
@@ -553,6 +599,33 @@ public class Controller implements Initializable {
 
     public void cursor(){
         removeHandlers();
+    }
+
+    public String[] getValues(String defName, String defDesc){
+        String[] result = new String[2];
+        TextInputDialog nameDialog = new TextInputDialog(defName);
+
+        nameDialog.setTitle("Имя");
+        nameDialog.setHeaderText("Введите имя объекта:");
+        nameDialog.setContentText("Имя:");
+
+        Optional<String> name = nameDialog.showAndWait();
+        result[0] = name.toString();
+
+        TextInputDialog dialog = new TextInputDialog(defDesc);
+
+        dialog.setTitle("Описание");
+        dialog.setHeaderText("Введите описание объекта:");
+        dialog.setContentText("Описание:");
+
+        Optional<String> desc = dialog.showAndWait();
+        result[1] = desc.toString();
+
+        return result;
+    }
+
+    public void addToList(String name, String desc, Shape shape){
+        mapObjects.add(new MapObject(name,desc,shape,1));
     }
 
     @Override

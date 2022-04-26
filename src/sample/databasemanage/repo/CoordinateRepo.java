@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 public class CoordinateRepo implements IRestRepository<Coordinate> {
     String url = "jdbc:postgresql://localhost:5432/gis";
     String user = "postgres";
-    String password = "123";
+    String password = "15968";
     Connection con;
 
     private static String selectQuery = "SELECT \"id\", \"object_id\", \"value_x\", \"value_y\" " +

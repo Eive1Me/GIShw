@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class MapRepo implements IRestRepository<Map> {
     String url = "jdbc:postgresql://localhost:5432/gis";
     String user = "postgres";
-    String password = "123";
+    String password = "15968";
     Connection con;
 
     private static String selectQuery = "SELECT \"id\",  \"start_shirota\", \"start_dolgota\", \"end_shirota\", \"end_dolgota\", \"start_x\", \"start_y\", \"end_x\", \"end_y\", \"image\"  " +
