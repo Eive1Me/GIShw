@@ -167,10 +167,20 @@ public class Controller implements Initializable {
         return true;
     }
 
-    public boolean openFromDatabase() throws IOException {
+    public void chooseMapFromDatabase() throws IOException {
+        FXMLLoader root = new FXMLLoader(getClass().getClassLoader().getResource("db_maps.fxml"));
+        Stage stage = new Stage();
+        stage.setTitle("My New Stage Title");
+        stage.setScene(new Scene(root.load(), 450, 450));
+        stage.showAndWait();
+        DbMapsController controller = root.getController();
+        if (controller.openMap) openFromDatabase(controller.chosenMapId);
+    }
+
+    public boolean openFromDatabase(Integer chosenMapId) throws IOException {
         //retrieve map image
         ArrayList<Map> maps = mapRepo.select();
-        Map chosenMap = maps.get(19);
+        Map chosenMap = maps.get(chosenMapId);
 
         //retrieve map data
         startShirota = chosenMap.getStartShirota();
@@ -182,17 +192,6 @@ public class Controller implements Initializable {
             img = ImageIO.read(new ByteArrayInputStream(chosenMap.getImage()));
             imgView.setImage(null);
             imgView.setImage(SwingFXUtils.toFXImage(img,null));
-
-            File temp = new File("tempbg.jpg");
-
-            try {
-                ImageIO.write(img, "png", temp);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            file = temp;
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -212,15 +211,7 @@ public class Controller implements Initializable {
                 mapObjects.add(objDB.toObject(coords));
         }
 
-        System.out.println(mapObjects.size());
-        System.out.println(mapObjects.get(0).getName());
-        System.out.println(mapObjects.get(0).getShape().getClass().getName());
-        System.out.println(mapObjects.get(1).getName());
-        System.out.println(mapObjects.get(1).getShape().getClass().getName());
-        System.out.println(mapObjects.get(2).getName());
-        System.out.println(mapObjects.get(2).getShape().getClass().getName());
-        System.out.println(mapObjects.get(3).getName());
-        System.out.println(mapObjects.get(3).getShape().getClass().getName());
+
         return true;
     }
 
@@ -258,15 +249,11 @@ public class Controller implements Initializable {
         }
     }
 
-    //TEST POLYLINE - DELETE
-    Polygon debugPolygon;
     public boolean saveToDatabase() throws IOException {
-        //filler debug data - delete
 //        mapObjects.add(new MapObject("obj", "descr", new Rectangle(99, 88, 77, 66), 1));
 //        mapObjects.add(new MapObject("obj2", "descr2", new Circle(99, 88, 77), 1));
 //        mapObjects.add(new MapObject("obj3", "descr2", new Line(99, 88, 77, 10), 1));
 //        mapObjects.add(new MapObject("obj4", "descr2", new Ellipse(99, 88, 77, 10), 1));
-//        mapObjects.add(new MapObject("objPOLYgon", "POLYGON!!!!!!", debugPolygon, 1));
         //save to database as map
         //save as new map
         Map map = new Map(1, startShirota, startDolgota, endShirota, endDolgota, startX, startY, endX, endY, file);
@@ -312,17 +299,17 @@ public class Controller implements Initializable {
             else if (Utils.isPolyline(shape)) {
                 Polyline sh = (Polyline) object.getShape();
                 Double[] points = sh.getPoints().toArray(new Double[0]);
-                for (int i = 0; i < points.length; i = i + 2) {
-                    Coordinate coord = new Coordinate(1, obj.getId(), points[i], points[i+1]);
-                    coordinateRepo.insert(coord);
+                for (int i = 0; i < points.length; i+=2) {
+                    Coordinate objCoord = new Coordinate(1, obj.getId(), points[i], points[i+1]);
+                    coordinateRepo.insert(objCoord);
                 }
             }
             else if (Utils.isPolygon(shape)) {
                 Polygon sh = (Polygon) object.getShape();
                 Double[] points = sh.getPoints().toArray(new Double[0]);
-                for (int i = 0; i < points.length; i = i + 2) {
-                    Coordinate coord = new Coordinate(1, obj.getId(), points[i], points[i+1]);
-                    coordinateRepo.insert(coord);
+                for (int i = 0; i < points.length; i+=2) {
+                    Coordinate objCoord = new Coordinate(1, obj.getId(), points[i], points[i+1]);
+                    coordinateRepo.insert(objCoord);
                 }
             }
         }
@@ -501,17 +488,10 @@ public class Controller implements Initializable {
                         pane.getChildren().add(line[0]);
                     }
                     line[0].getPoints().addAll(event.getX(), event.getY());
-
-
-//                    System.out.println("_____POLYLINE SAVING");
-//                    /////////////debug polyline saving
-//                    debugPolyline = line[0];
-//                    ///////////////////
                 } else if (event.isSecondaryButtonDown()) {
                     coordsArr.clear();
                 }
             };
-
 
             mouseReleaseHandler = event -> {};
 
@@ -578,12 +558,6 @@ public class Controller implements Initializable {
                         pane.getChildren().add(line[0]);
                     }
                     line[0].getPoints().addAll(event.getX(), event.getY());
-
-
-                    System.out.println("_____POLYLINE SAVING");
-                    /////////////debug polyline saving
-                    debugPolygon = line[0];
-                    ///////////////////
                 } else if (event.isSecondaryButtonDown()) {
                     coordsArr.clear();
                 }

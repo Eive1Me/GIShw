@@ -3,6 +3,7 @@ package sample.databasemanage.entity;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MapObject {
@@ -38,6 +39,26 @@ public class MapObject {
                 Rectangle rectangle = new Rectangle(coords.get(0).getX(), coords.get(0).getY(), coords.get(1).getX() - coords.get(0).getX(), coords.get(0).getY() - coords.get(1).getY());
                 rectangle.setFill(Paint.valueOf(this.getColor()));
                 result.setShape(rectangle); break;
+            }
+            case POLYLINE: {
+                Polyline polyline = new Polyline();
+                ArrayList<Double> points = new ArrayList<>();
+                for (Coordinate coordinate: coords) {
+                    points.add(coordinate.getX());
+                    points.add(coordinate.getY());
+                }
+                polyline.getPoints().addAll(points);
+                result.setShape(polyline); break;
+            }
+            case POLYGON: {
+                Polygon polygon = new Polygon();
+                ArrayList<Double> points = new ArrayList<>();
+                for (Coordinate coordinate: coords) {
+                    points.add(coordinate.getX());
+                    points.add(coordinate.getY());
+                }
+                polygon.getPoints().addAll(points);
+                result.setShape(polygon); break;
             }
         }
         return result;

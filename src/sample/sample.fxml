@@ -5,13 +5,14 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="Файл">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#openF" text="Открыть карту" />
+              <MenuItem mnemonicParsing="false" onAction="#openF" text="Создать новую карту" />
+                  <MenuItem mnemonicParsing="false" onAction="#chooseMapFromDatabase" text="Открыть карту из БД" />
                   <MenuItem mnemonicParsing="false" onAction="#saveF" text="Сохранить карту" />
                   <MenuItem mnemonicParsing="false" onAction="#closeF" text="Закрыть карту" />
             </items>
