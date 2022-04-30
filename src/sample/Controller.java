@@ -5,10 +5,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -153,6 +155,7 @@ public class Controller implements Initializable {
 
                 //creating list of objects
                 mapObjects = new ArrayList<>();
+                clearObjects();
             } catch (NullPointerException ignored){}
         } catch (IOException ignored){}
     }
@@ -167,20 +170,41 @@ public class Controller implements Initializable {
         return true;
     }
 
+    public void clearObjects() {
+        ArrayList<Node> objects = new ArrayList<>();
+        for (Node c: pane.getChildren()) {
+            if (!c.getClass().getName().contains("ImageView")) {
+                objects.add(c);
+            }
+        }
+        pane.getChildren().removeAll(objects);
+    }
+
     public void chooseMapFromDatabase() throws IOException {
-        FXMLLoader root = new FXMLLoader(getClass().getClassLoader().getResource("db_maps.fxml"));
-        Stage stage = new Stage();
-        stage.setTitle("My New Stage Title");
-        stage.setScene(new Scene(root.load(), 450, 450));
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource(
+                        "db_maps.fxml"
+                )
+        );
+
+        Stage stage = new Stage(StageStyle.DECORATED);
+        stage.setScene(
+                new Scene(loader.load())
+        );
+
+        DbMapsController controller = loader.getController();
+        controller.initData(mapRepo.select(), mapObjectRepo);
+
         stage.showAndWait();
-        DbMapsController controller = root.getController();
+
         if (controller.openMap) openFromDatabase(controller.chosenMapId);
     }
 
     public boolean openFromDatabase(Integer chosenMapId) throws IOException {
+        clearObjects();
         //retrieve map image
         ArrayList<Map> maps = mapRepo.select();
-        Map chosenMap = maps.get(chosenMapId);
+        Map chosenMap = maps.get(chosenMapId-1);
 
         //retrieve map data
         startShirota = chosenMap.getStartShirota();
@@ -199,6 +223,7 @@ public class Controller implements Initializable {
         //retrieve objects
         ArrayList<sample.databasemanage.entity.MapObject> mapObjectsDB = mapObjectRepo.selectByMapId(chosenMap.getId());
         mapObjects = new ArrayList<>();
+        System.out.println(mapObjectsDB);
         for (sample.databasemanage.entity.MapObject objDB: mapObjectsDB) {
             ArrayList<Coordinate> coords = coordinateRepo.selectByObjectId(objDB.getId());
 
@@ -222,6 +247,7 @@ public class Controller implements Initializable {
             shape.setStrokeWidth(1.0);
             shape.setStroke(Color.BLACK);
             pane.getChildren().add(shape);
+            System.out.println("drawn objects");
         }
     }
 
@@ -359,9 +385,9 @@ public class Controller implements Initializable {
     //==========================drawing obj==============================
 
     EventHandler<MouseEvent> mousePressedHandler = mouseEvent -> {},
-                             mouseDraggedHandler = mouseEvent -> {},
-                             mouseReleaseHandler = mouseEvent -> {},
-                             mouseClickHandler = mouseEvent -> {};
+            mouseDraggedHandler = mouseEvent -> {},
+            mouseReleaseHandler = mouseEvent -> {},
+            mouseClickHandler = mouseEvent -> {};
 
     public void removeHandlers(){
         pane.removeEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
@@ -394,6 +420,9 @@ public class Controller implements Initializable {
                 end[0] = new Coords(event.getX(), event.getY());
                 line[0].setEndX(end[0].x);
                 line[0].setEndY(end[0].y);
+                String[] result;
+                result = getValues("Линия","Расстояние");
+                addToList(result[0],result[1],line[0]);
             };
 
             pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
@@ -432,6 +461,9 @@ public class Controller implements Initializable {
                 end[0] = new Coords(event.getX(), event.getY());
                 ellipses[0].setRadiusX(start[0].xDist(end[0])/2);
                 ellipses[0].setRadiusY(start[0].yDist(end[0])/2);
+                String[] result;
+                result = getValues("Озеро","Территория");
+                addToList(result[0],result[1],ellipses[0]);
             };
 
             mouseClickHandler = event -> {
@@ -470,6 +502,9 @@ public class Controller implements Initializable {
             mouseReleaseHandler = event -> {
                 end[0] = new Coords(event.getX(), event.getY());
                 circles[0].setRadius(start[0].distanceTo(end[0])/2);
+                String[] result;
+                result = getValues("Круг","Территория");
+                addToList(result[0],result[1],circles[0]);
             };
 
             mouseClickHandler = event -> {
@@ -500,6 +535,9 @@ public class Controller implements Initializable {
                     line[0].getPoints().addAll(event.getX(), event.getY());
                 } else if (event.isSecondaryButtonDown()) {
                     coordsArr.clear();
+                    String[] result;
+                    result = getValues("Путь","Дорога");
+                    addToList(result[0],result[1],line[0]);
                 }
             };
 
@@ -537,6 +575,9 @@ public class Controller implements Initializable {
                 end[0] = new Coords(event.getX(), event.getY());
                 rectangles[0].setWidth(start[0].xDist(end[0]));
                 rectangles[0].setHeight(start[0].yDist(end[0]));
+                String[] result;
+                result = getValues("Прямоугольник","Здание");
+                addToList(result[0],result[1],rectangles[0]);
             };
 
             mouseClickHandler = event -> {
@@ -570,6 +611,9 @@ public class Controller implements Initializable {
                     line[0].getPoints().addAll(event.getX(), event.getY());
                 } else if (event.isSecondaryButtonDown()) {
                     coordsArr.clear();
+                    String[] result;
+                    result = getValues("Многоугольник","Территория");
+                    addToList(result[0],result[1],line[0]);
                 }
             };
 
@@ -581,6 +625,33 @@ public class Controller implements Initializable {
 
     public void cursor(){
         removeHandlers();
+    }
+
+    public String[] getValues(String defName, String defDesc){
+        String[] result = new String[2];
+        TextInputDialog nameDialog = new TextInputDialog(defName);
+
+        nameDialog.setTitle("Имя");
+        nameDialog.setHeaderText("Введите имя объекта:");
+        nameDialog.setContentText("Имя:");
+
+        Optional<String> name = nameDialog.showAndWait();
+        result[0] = name.toString();
+
+        TextInputDialog dialog = new TextInputDialog(defDesc);
+
+        dialog.setTitle("Описание");
+        dialog.setHeaderText("Введите описание объекта:");
+        dialog.setContentText("Описание:");
+
+        Optional<String> desc = dialog.showAndWait();
+        result[1] = desc.toString();
+
+        return result;
+    }
+
+    public void addToList(String name, String desc, Shape shape){
+        mapObjects.add(new MapObject(name,desc,shape,1));
     }
 
     @Override
@@ -601,5 +672,4 @@ public class Controller implements Initializable {
         imgView.fitHeightProperty().bind(pane.heightProperty());
         pane.autosize();
     }
-
 }
