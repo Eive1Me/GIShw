@@ -220,7 +220,7 @@ public class Controller implements Initializable {
             imgView.setImage(SwingFXUtils.toFXImage(img,null));
             File temp = new File("tempbg.jpg");
             try {
-                ImageIO.write(img, "jpg", temp);
+                ImageIO.write(img, "png", temp);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
