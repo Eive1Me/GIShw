@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 
 public class Controller implements Initializable {
@@ -171,13 +172,14 @@ public class Controller implements Initializable {
     }
 
     public void clearObjects() {
-        ArrayList<Node> objects = new ArrayList<>();
-        for (Node c: pane.getChildren()) {
-            if (!c.getClass().getName().contains("ImageView")) {
-                objects.add(c);
-            }
-        }
-        pane.getChildren().removeAll(objects);
+//        ArrayList<Node> objects = new ArrayList<>();
+//        for (Node c: pane.getChildren()) {
+//            if (!c.getClass().getName().contains("ImageView")) {
+//                objects.add(c);
+//            }
+//        }
+//        pane.getChildren().removeAll(objects);
+        pane.getChildren().removeAll(pane.getChildren().stream().filter(c -> !c.getClass().getName().contains("ImageView")).collect(Collectors.toList()));
     }
 
     public void chooseMapFromDatabase() throws IOException {
