@@ -211,8 +211,18 @@ public class Controller implements Initializable {
                 mapObjects.add(objDB.toObject(coords));
         }
 
-
+        drawObjects();
         return true;
+    }
+
+    public void drawObjects(){
+        for (MapObject a:mapObjects) {
+            Shape shape = (Shape) a.getShape();
+            shape.setFill(Color.TRANSPARENT);
+            shape.setStrokeWidth(1.0);
+            shape.setStroke(Color.BLACK);
+            pane.getChildren().add(shape);
+        }
     }
 
     public Stage openObjectTable() throws IOException {
