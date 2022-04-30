@@ -218,6 +218,13 @@ public class Controller implements Initializable {
             img = ImageIO.read(new ByteArrayInputStream(chosenMap.getImage()));
             imgView.setImage(null);
             imgView.setImage(SwingFXUtils.toFXImage(img,null));
+            File temp = new File("tempbg.jpg");
+            try {
+                ImageIO.write(img, "jpg", temp);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            file = temp;
         } catch (IOException e) {
             e.printStackTrace();
         }
