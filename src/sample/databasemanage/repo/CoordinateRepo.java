@@ -1,6 +1,7 @@
 package sample.databasemanage.repo;
 
 
+import sample.databasemanage.DBConnect;
 import sample.databasemanage.entity.Coordinate;
 import sample.databasemanage.entity.MapObject;
 
@@ -11,9 +12,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CoordinateRepo implements IRestRepository<Coordinate> {
-    String url = "jdbc:postgresql://localhost:5432/gis";
-    String user = "postgres";
-    String password = "123";
+    String url = DBConnect.DB_URL;
+    String user = DBConnect.DB_USER;
+    String password = DBConnect.DB_PASSWORD;
     Connection con;
 
     private static String selectQuery = "SELECT \"id\", \"object_id\", \"value_x\", \"value_y\" " +

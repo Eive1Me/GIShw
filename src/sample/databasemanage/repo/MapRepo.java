@@ -2,6 +2,7 @@ package sample.databasemanage.repo;
 
 
 
+import sample.databasemanage.DBConnect;
 import sample.databasemanage.entity.Coordinate;
 import sample.databasemanage.entity.Map;
 import sample.databasemanage.entity.MapObject;
@@ -15,9 +16,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MapRepo implements IRestRepository<Map> {
-    String url = "jdbc:postgresql://localhost:5432/gis";
-    String user = "postgres";
-    String password = "123";
+    String url = DBConnect.DB_URL;
+    String user = DBConnect.DB_USER;
+    String password = DBConnect.DB_PASSWORD;
     Connection con;
 
     private static String selectQuery = "SELECT \"id\",  \"start_shirota\", \"start_dolgota\", \"end_shirota\", \"end_dolgota\", \"start_x\", \"start_y\", \"end_x\", \"end_y\", \"image\"  " +
