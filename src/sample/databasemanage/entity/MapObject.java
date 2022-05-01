@@ -1,5 +1,6 @@
 package sample.databasemanage.entity;
 
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
 
@@ -37,7 +38,9 @@ public class MapObject {
             }
             case RECTANGLE: {
                 Rectangle rectangle = new Rectangle(coords.get(0).getX(), coords.get(0).getY(), coords.get(1).getX() - coords.get(0).getX(), coords.get(2).getY() - coords.get(0).getY());
-                rectangle.setFill(Paint.valueOf(this.getColor()));
+
+                System.out.println(this.getColor());
+                rectangle.setFill(Color.web(this.getColor()));
                 result.setShape(rectangle);
                 break;
             }
@@ -59,6 +62,7 @@ public class MapObject {
                     points.add(coordinate.getY());
                 }
                 polygon.getPoints().addAll(points);
+                polygon.setFill(Color.web(this.getColor()));
                 result.setShape(polygon); break;
             }
         }
@@ -72,12 +76,12 @@ public class MapObject {
         result.setLayer(this.getLayer());
         switch (this.getShape()) {
             case CIRCLE: {
-                result.setShape(new Circle(coords.get(0).getX(), coords.get(0).getY(), radius.getValueX(), Paint.valueOf(this.getColor())));
+                result.setShape(new Circle(coords.get(0).getX(), coords.get(0).getY(), radius.getValueX(), Color.web(this.getColor())));
                 break;
             }
             case ELLIPSE: {
                 Ellipse el = new Ellipse(coords.get(0).getX(), coords.get(0).getY(), radius.getValueX(), radius.getValueY());
-                el.setFill(Paint.valueOf(this.getColor()));
+                el.setFill(Color.web(this.getColor()));
                 result.setShape(el);
                 break;
             }

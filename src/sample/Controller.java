@@ -7,10 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -56,6 +53,8 @@ public class Controller implements Initializable {
     Label coordsLbl;
     @FXML
     ImageView imgView;
+    @FXML
+    ColorPicker colorPicker;
 
     FileChooser fileChooser = new FileChooser();
     File file;
@@ -252,7 +251,7 @@ public class Controller implements Initializable {
     public void drawObjects(){
         for (MapObject a:mapObjects) {
             Shape shape = (Shape) a.getShape();
-            shape.setFill(Color.TRANSPARENT);
+//            shape.setFill(Color.TRANSPARENT);
             shape.setStrokeWidth(1.0);
             shape.setStroke(Color.BLACK);
             pane.getChildren().add(shape);
@@ -448,7 +447,8 @@ public class Controller implements Initializable {
         try {
             mousePressedHandler = event -> {
                 ellipses[0] = new Ellipse();
-                ellipses[0].setFill(Color.TRANSPARENT);
+//                ellipses[0].setFill(Color.TRANSPARENT);
+                ellipses[0].setFill(colorPicker.getValue());
                 ellipses[0].setStrokeWidth(1.0);
                 ellipses[0].setStroke(Color.BLACK);
                 start[0] = new Coords(event.getX(), event.getY());
@@ -492,7 +492,8 @@ public class Controller implements Initializable {
         try {
             mousePressedHandler = event -> {
                 circles[0] = new Circle();
-                circles[0].setFill(Color.TRANSPARENT);
+//                circles[0].setFill(Color.TRANSPARENT);
+                circles[0].setFill(colorPicker.getValue());
                 circles[0].setStrokeWidth(1.0);
                 circles[0].setStroke(Color.BLACK);
                 start[0] = new Coords(event.getX(), event.getY());
@@ -564,7 +565,8 @@ public class Controller implements Initializable {
         try {
             mousePressedHandler = event -> {
                 rectangles[0] = new Rectangle();
-                rectangles[0].setFill(Color.TRANSPARENT);
+//                rectangles[0].setFill(Color.TRANSPARENT);
+                rectangles[0].setFill(colorPicker.getValue());
                 rectangles[0].setStrokeWidth(1.0);
                 rectangles[0].setStroke(Color.BLACK);
                 start[0] = new Coords(event.getX(), event.getY());
@@ -612,7 +614,8 @@ public class Controller implements Initializable {
                     coordsArr.add(new Coords(event.getX(), event.getY()));
                     if (coordsArr.size() == 1){
                         line[0] = new Polygon();
-                        line[0].setFill(Color.TRANSPARENT);
+//                        line[0].setFill(Color.TRANSPARENT);
+                        line[0].setFill(colorPicker.getValue());
                         line[0].setStrokeWidth(1.0);
                         line[0].setStroke(Color.BLACK);
                         pane.getChildren().add(line[0]);

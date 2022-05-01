@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 import sample.databasemanage.entity.MapObject;
 
@@ -64,5 +65,16 @@ public class Utils {
 //        ImageIO.write(bImage2, , new File("output.jpg") );
         System.out.println("image created");
         return bImage2;
+    }
+
+    // Helper method
+    private static String format(double val) {
+        String in = Integer.toHexString((int) Math.round(val * 255));
+        return in.length() == 1 ? "0" + in : in;
+    }
+
+    public static String toHexString(Color value) {
+        return "#" + (format(value.getRed()) + format(value.getGreen()) + format(value.getBlue()) + format(value.getOpacity()))
+                .toUpperCase();
     }
 }

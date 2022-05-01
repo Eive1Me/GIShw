@@ -5,7 +5,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -46,6 +46,7 @@
             <Button fx:id="boopBTN112" layoutX="263.0" layoutY="13.0" mnemonicParsing="false" onAction="#wierdRectangle" text="wierd2" />
             <Button fx:id="boopBTN1121" layoutX="431.0" layoutY="13.0" mnemonicParsing="false" onAction="#cursor" text="cursor" />
             <Button fx:id="boopBTN111" layoutX="272.0" layoutY="13.0" mnemonicParsing="false" onAction="#manageCoords" text="coords" />
+            <ColorPicker fx:id="colorPicker" />
         </items>
       </ToolBar>
    </bottom>
