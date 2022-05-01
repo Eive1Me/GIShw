@@ -334,8 +334,8 @@ public class Controller implements Initializable {
                 Rectangle sh = (Rectangle) object.getShape();
                 Coordinate objCoord1 = new Coordinate(1, obj.getId(), sh.getX(), sh.getY());
                 Coordinate objCoord2 = new Coordinate(1, obj.getId(), sh.getX() + sh.getWidth(), sh.getY());
-                Coordinate objCoord3 = new Coordinate(1, obj.getId(), sh.getX(), sh.getY() - sh.getHeight());
-                Coordinate objCoord4 = new Coordinate(1, obj.getId(), sh.getX() + sh.getWidth(), sh.getY() - sh.getHeight());
+                Coordinate objCoord3 = new Coordinate(1, obj.getId(), sh.getX(), sh.getY() + sh.getHeight());
+                Coordinate objCoord4 = new Coordinate(1, obj.getId(), sh.getX() + sh.getWidth(), sh.getY() + sh.getHeight());
                 coordinateRepo.insert(objCoord1);
                 coordinateRepo.insert(objCoord2);
                 coordinateRepo.insert(objCoord3);

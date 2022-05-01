@@ -36,9 +36,10 @@ public class MapObject {
                 result.setShape(new Line(coords.get(0).getX(), coords.get(0).getY(), coords.get(1).getX(), coords.get(1).getY())); break;
             }
             case RECTANGLE: {
-                Rectangle rectangle = new Rectangle(coords.get(0).getX(), coords.get(0).getY(), coords.get(1).getX() - coords.get(0).getX(), coords.get(0).getY() - coords.get(1).getY());
+                Rectangle rectangle = new Rectangle(coords.get(0).getX(), coords.get(0).getY(), coords.get(1).getX() - coords.get(0).getX(), coords.get(2).getY() - coords.get(0).getY());
                 rectangle.setFill(Paint.valueOf(this.getColor()));
-                result.setShape(rectangle); break;
+                result.setShape(rectangle);
+                break;
             }
             case POLYLINE: {
                 Polyline polyline = new Polyline();
