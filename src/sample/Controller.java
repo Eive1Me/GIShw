@@ -1,6 +1,7 @@
 package sample;
 
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -56,6 +57,18 @@ public class Controller implements Initializable {
     @FXML
     ColorPicker colorPicker;
 
+   EventHandler<MouseEvent> getDetailsEvent(String name, String desc) {
+       Alert al = new Alert(Alert.AlertType.NONE);
+       return new EventHandler<MouseEvent>() {
+           @Override
+           public void handle(MouseEvent mouseEvent) {
+               al.setAlertType(Alert.AlertType.CONFIRMATION);
+               al.setHeaderText(name);
+               al.setContentText(desc);
+               al.show();
+           }
+       };
+   }
     FileChooser fileChooser = new FileChooser();
     File file;
     BufferedImage img;
@@ -254,6 +267,7 @@ public class Controller implements Initializable {
 //            shape.setFill(Color.TRANSPARENT);
             shape.setStrokeWidth(1.0);
             shape.setStroke(Color.BLACK);
+            shape.setOnMouseClicked(getDetailsEvent(a.getName(), a.getDescription()));
             pane.getChildren().add(shape);
             System.out.println("drawn objects");
         }
@@ -431,6 +445,9 @@ public class Controller implements Initializable {
                 String[] result;
                 result = getValues("Линия","Расстояние");
                 addToList(result[0],result[1],line[0]);
+
+                //on click show details
+                line[0].setOnMouseClicked(getDetailsEvent(result[0], result[1]));
             };
 
             pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
@@ -473,6 +490,9 @@ public class Controller implements Initializable {
                 String[] result;
                 result = getValues("Озеро","Территория");
                 addToList(result[0],result[1],ellipses[0]);
+
+                //on click show details
+                ellipses[0].setOnMouseClicked(getDetailsEvent(result[0], result[1]));
             };
 
             mouseClickHandler = event -> {
@@ -515,6 +535,9 @@ public class Controller implements Initializable {
                 String[] result;
                 result = getValues("Круг","Территория");
                 addToList(result[0],result[1],circles[0]);
+
+                //on click show details
+                circles[0].setOnMouseClicked(getDetailsEvent(result[0], result[1]));
             };
 
             mouseClickHandler = event -> {
@@ -548,6 +571,9 @@ public class Controller implements Initializable {
                     String[] result;
                     result = getValues("Путь","Дорога");
                     addToList(result[0],result[1],line[0]);
+
+                    //on click show details
+                    line[0].setOnMouseClicked(getDetailsEvent(result[0], result[1]));
                 }
             };
 
@@ -589,6 +615,9 @@ public class Controller implements Initializable {
                 String[] result;
                 result = getValues("Прямоугольник","Здание");
                 addToList(result[0],result[1],rectangles[0]);
+
+                //on click show details
+                rectangles[0].setOnMouseClicked(getDetailsEvent(result[0], result[1]));
             };
 
             mouseClickHandler = event -> {
@@ -626,6 +655,9 @@ public class Controller implements Initializable {
                     String[] result;
                     result = getValues("Многоугольник","Территория");
                     addToList(result[0],result[1],line[0]);
+
+                    //on click show details
+                    line[0].setOnMouseClicked(getDetailsEvent(result[0], result[1]));
                 }
             };
 
