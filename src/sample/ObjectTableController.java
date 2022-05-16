@@ -5,9 +5,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 import javafx.util.Callback;
 import sample.entities.MapObject;
@@ -31,7 +34,10 @@ public class ObjectTableController {
     TableColumn area;
     @FXML
     TableColumn perimeter;
+    @FXML
+    TableColumn length;
     public void initData(ArrayList<MapObject> data) {
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
         shape.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MapObject, String>, ObservableValue<String>>() {
@@ -49,18 +55,40 @@ public class ObjectTableController {
 
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<MapObject, String> p) {
-                if (p.getValue() != null) {
-                    if (Utils.toShape(p.getValue().getShape().getClass().getName()) != sample.databasemanage.entity.MapObject.Shape.LINE) {
-                        Shape shape = (Shape) p.getValue().getShape();
-                        return new SimpleStringProperty(shape.getFill().toString());
-                    }
-                    return new SimpleStringProperty("<no name>");
+                Shape shape = (Shape) p.getValue().getShape();
+                if (shape.getFill() != null) {
+                    return new SimpleStringProperty(Utils.toHexString((Color) shape.getFill()));
                 } else {
                     return new SimpleStringProperty("<no name>");
                 }
             }
         });
+
         layer.setCellValueFactory(new PropertyValueFactory<>("layer"));
+
+        area.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MapObject, String>, ObservableValue<String>>() {
+
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<MapObject, String> p) {
+                return new SimpleStringProperty(Double.toString(p.getValue().getArea()));
+            }
+        });
+
+        perimeter.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MapObject, String>, ObservableValue<String>>() {
+
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<MapObject, String> p) {
+                return new SimpleStringProperty(Double.toString(p.getValue().getPerimeter()));
+            }
+        });
+
+        length.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MapObject, String>, ObservableValue<String>>() {
+
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<MapObject, String> p) {
+                return new SimpleStringProperty(Double.toString(p.getValue().getLength()));
+            }
+        });
 
         ObservableList<MapObject> list = FXCollections.observableArrayList(data);
         table.setItems(list);

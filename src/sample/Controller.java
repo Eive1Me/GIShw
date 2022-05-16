@@ -56,15 +56,20 @@ public class Controller implements Initializable {
     ImageView imgView;
     @FXML
     ColorPicker colorPicker;
+    @FXML
+    ToolBar toolBar;
 
-   EventHandler<MouseEvent> getDetailsEvent(String name, String desc) {
+   EventHandler<MouseEvent> getDetailsEvent(MapObject object, String name, String desc) {
        Alert al = new Alert(Alert.AlertType.NONE);
        return new EventHandler<MouseEvent>() {
            @Override
            public void handle(MouseEvent mouseEvent) {
                al.setAlertType(Alert.AlertType.CONFIRMATION);
                al.setHeaderText(name);
-               al.setContentText(desc);
+               String length = object.getShape().getClass().toString().toLowerCase().contains("line") ? "\nДлина: " + object.getLength() : "";
+               String perimeter = object.getShape().getClass().toString().toLowerCase().contains("line") ? "" : "\nПериметр: " + object.getPerimeter();
+               String area = object.getShape().getClass().toString().toLowerCase().contains("line") ? "" : "\nПлощадь: " + object.getArea();
+               al.setContentText(desc + length + perimeter + area);
                al.show();
            }
        };
@@ -169,18 +174,29 @@ public class Controller implements Initializable {
                 //creating list of objects
                 mapObjects = new ArrayList<>();
                 clearObjects();
+                toolBar.setVisible(true);
             } catch (NullPointerException ignored){}
         } catch (IOException ignored){}
     }
 
     public boolean saveF() throws IOException {
-        String saveChoice = "toDatabase";
-
-        switch (saveChoice) {
-            case "toDatabase": saveToDatabase(); break;
-            case "toDevice": saveToDevice(); break;
+        if (imgView.getImage() == null) {
+            throwNoMapError();
+            return false;
         }
-        return true;
+        else {
+            String saveChoice = "toDatabase";
+
+            switch (saveChoice) {
+                case "toDatabase":
+                    saveToDatabase();
+                    break;
+                case "toDevice":
+                    saveToDevice();
+                    break;
+            }
+            return true;
+        }
     }
 
     public void clearObjects() {
@@ -258,6 +274,7 @@ public class Controller implements Initializable {
         }
 
         drawObjects();
+        toolBar.setVisible(true);
         return true;
     }
 
@@ -267,30 +284,38 @@ public class Controller implements Initializable {
 //            shape.setFill(Color.TRANSPARENT);
             shape.setStrokeWidth(1.0);
             shape.setStroke(Color.BLACK);
-            shape.setOnMouseClicked(getDetailsEvent(a.getName(), a.getDescription()));
+            shape.setOnMouseClicked(getDetailsEvent(a, a.getName(), a.getDescription()));
             pane.getChildren().add(shape);
             System.out.println("drawn objects");
         }
     }
 
     public Stage openObjectTable() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource(
-                        "map_object_table.fxml"
-                )
-        );
+        if (imgView.getImage() == null) {
+            throwNoMapError();
+            return null;
+        }
+        else {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "map_object_table.fxml"
+                    )
+            );
 
-        Stage stage = new Stage(StageStyle.DECORATED);
-        stage.setScene(
-                new Scene(loader.load())
-        );
+            Stage stage = new Stage(StageStyle.DECORATED);
+            stage.setMinWidth(800);
+            stage.setMaxHeight(600);
+            stage.setScene(
+                    new Scene(loader.load())
+            );
 
-        ObjectTableController controller = loader.getController();
-        controller.initData(mapObjects);
+            ObjectTableController controller = loader.getController();
+            controller.initData(mapObjects);
 
-        stage.show();
+            stage.show();
 
-        return stage;
+            return stage;
+        }
     }
 
     public void manageCoords(){
@@ -380,23 +405,31 @@ public class Controller implements Initializable {
     }
 
     public void closeF() throws IOException {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Закрытие карты");
-        alert.setHeaderText("Сохранить карту?");
-        ButtonType ye = new ButtonType("Да");
-        ButtonType nyo = new ButtonType("Нет");
-        ButtonType goBack = new ButtonType("Отмена");
-        alert.getButtonTypes().clear();
-        alert.getButtonTypes().addAll(ye,nyo,goBack);
 
-        Optional<ButtonType> option = alert.showAndWait();
+        if (imgView .getImage() == null) {
+            throwNoMapError();
+        }
+        else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Закрытие карты");
+            alert.setHeaderText("Сохранить карту?");
+            ButtonType ye = new ButtonType("Да");
+            ButtonType nyo = new ButtonType("Нет");
+            ButtonType goBack = new ButtonType("Отмена");
+            alert.getButtonTypes().clear();
+            alert.getButtonTypes().addAll(ye, nyo, goBack);
 
-        if (option.isPresent()) {
-            if (option.get() == ye) {
-                if (saveF()) imgView.setImage(null);
-            } else if (option.get() == nyo) {
-                imgView.setImage(null);
+            Optional<ButtonType> option = alert.showAndWait();
+
+            if (option.isPresent()) {
+                if (option.get() == ye) {
+                    if (saveF()) imgView.setImage(null);
+                } else if (option.get() == nyo) {
+                    imgView.setImage(null);
+                }
             }
+            clearObjects();
+            toolBar.setVisible(false);
         }
     }
 
@@ -442,12 +475,15 @@ public class Controller implements Initializable {
                 end[0] = new Coords(event.getX(), event.getY());
                 line[0].setEndX(end[0].x);
                 line[0].setEndY(end[0].y);
+
+                line[0].setStrokeWidth(3);
+
                 String[] result;
                 result = getValues("Линия","Расстояние");
-                addToList(result[0],result[1],line[0]);
+                MapObject a = addToList(result[0],result[1],line[0]);
 
                 //on click show details
-                line[0].setOnMouseClicked(getDetailsEvent(result[0], result[1]));
+                line[0].setOnMouseClicked(getDetailsEvent(a, result[0], result[1]));
             };
 
             pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
@@ -489,10 +525,10 @@ public class Controller implements Initializable {
                 ellipses[0].setRadiusY(start[0].yDist(end[0])/2);
                 String[] result;
                 result = getValues("Озеро","Территория");
-                addToList(result[0],result[1],ellipses[0]);
+                MapObject m = addToList(result[0],result[1],ellipses[0]);
 
                 //on click show details
-                ellipses[0].setOnMouseClicked(getDetailsEvent(result[0], result[1]));
+                ellipses[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
             };
 
             mouseClickHandler = event -> {
@@ -534,10 +570,10 @@ public class Controller implements Initializable {
                 circles[0].setRadius(start[0].distanceTo(end[0])/2);
                 String[] result;
                 result = getValues("Круг","Территория");
-                addToList(result[0],result[1],circles[0]);
+                MapObject m = addToList(result[0],result[1],circles[0]);
 
                 //on click show details
-                circles[0].setOnMouseClicked(getDetailsEvent(result[0], result[1]));
+                circles[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
             };
 
             mouseClickHandler = event -> {
@@ -563,6 +599,9 @@ public class Controller implements Initializable {
                     coordsArr.add(new Coords(event.getX(), event.getY()));
                     if (coordsArr.size() == 1){
                         line[0] = new Polyline();
+
+                        line[0].setStrokeWidth(3);
+
                         pane.getChildren().add(line[0]);
                     }
                     line[0].getPoints().addAll(event.getX(), event.getY());
@@ -570,10 +609,10 @@ public class Controller implements Initializable {
                     coordsArr.clear();
                     String[] result;
                     result = getValues("Путь","Дорога");
-                    addToList(result[0],result[1],line[0]);
+                    MapObject m = addToList(result[0],result[1],line[0]);
 
                     //on click show details
-                    line[0].setOnMouseClicked(getDetailsEvent(result[0], result[1]));
+                    line[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
                 }
             };
 
@@ -614,10 +653,10 @@ public class Controller implements Initializable {
                 rectangles[0].setHeight(start[0].yDist(end[0]));
                 String[] result;
                 result = getValues("Прямоугольник","Здание");
-                addToList(result[0],result[1],rectangles[0]);
+                MapObject m = addToList(result[0],result[1],rectangles[0]);
 
                 //on click show details
-                rectangles[0].setOnMouseClicked(getDetailsEvent(result[0], result[1]));
+                rectangles[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
             };
 
             mouseClickHandler = event -> {
@@ -654,10 +693,10 @@ public class Controller implements Initializable {
                     coordsArr.clear();
                     String[] result;
                     result = getValues("Многоугольник","Территория");
-                    addToList(result[0],result[1],line[0]);
+                    MapObject m = addToList(result[0],result[1],line[0]);
 
                     //on click show details
-                    line[0].setOnMouseClicked(getDetailsEvent(result[0], result[1]));
+                    line[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
                 }
             };
 
@@ -694,12 +733,15 @@ public class Controller implements Initializable {
         return result;
     }
 
-    public void addToList(String name, String desc, Shape shape){
-        mapObjects.add(new MapObject(name,desc,shape,1));
+    public MapObject addToList(String name, String desc, Shape shape){
+        MapObject m = new MapObject(name,desc,shape,1);
+        mapObjects.add(m);
+        return m;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        toolBar.setVisible(false);
         try {
             coordinateRepo = new CoordinateRepo();
             mapObjectRepo = new MapObjectRepo();
@@ -715,5 +757,17 @@ public class Controller implements Initializable {
         imgView.fitWidthProperty().bind(pane.widthProperty());
         imgView.fitHeightProperty().bind(pane.heightProperty());
         pane.autosize();
+    }
+
+    public void throwNoMapError() {
+        final Alert invalidDataAlert = new Alert(Alert.AlertType.ERROR);
+
+        final String message = "Сначала откройте карту или создайте новую.";
+
+        invalidDataAlert.setTitle("Ошибка");
+        invalidDataAlert.setHeaderText("Нет открытой карты");
+        invalidDataAlert.setResizable(true);
+        invalidDataAlert.setContentText(message);
+        invalidDataAlert.showAndWait();
     }
 }

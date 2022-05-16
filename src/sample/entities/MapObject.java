@@ -88,16 +88,16 @@ public class MapObject {
             }
             case "javafx.scene.shape.Polygon": {
                 //todo
-                return shape.getScaleX();
+//                return shape.getScaleX();
 //                Polygon polygon = (Polygon) shape;
-//                return 0;
+                return 0;
             }
             case "javafx.scene.shape.Line":
             case "javafx.scene.shape.Path": {
                 return 0;
             }
         }
-        return -1;
+        return 0;
     }
 
     public double getPerimeter() {
@@ -121,15 +121,31 @@ public class MapObject {
                 //todo
                 return 0;
             }
-            case "javafx.scene.shape.Line": {
-                Line line = (Line) shape;
-                return Math.pow(line.getEndX() - line.getStartX(), 2) + Math.pow(line.getEndY() - line.getStartY(), 2);
-            }
-            case "javafx.scene.shape.Path": {
-                //todo
-                return 1;
+            case "javafx.scene.shape.Line":
+            case "javafx.scene.shape.Polyline": {
+                return 0;
             }
         }
-        return -1;
+        return 0;
+    }
+
+    public double getLength() {
+        String shapeName = shape.getClass().getName();
+        switch (shapeName) {
+            case "javafx.scene.shape.Polyline": {
+                double result = 0;
+                Polyline polyline = (Polyline) shape;
+                List<Double> points = polyline.getPoints();
+                for (int i = 0; i <= points.size()-3; i+= 2) {
+                    result += Math.sqrt(Math.pow(points.get(i)-points.get(i+2), 2) + Math.pow(points.get(i+1)-points.get(i+3), 2));
+                }
+                return result;
+            }
+            case "javafx.scene.shape.Line": {
+                Line line = (Line) shape;
+                return Math.sqrt(Math.pow(line.getEndX() - line.getStartX(), 2) + Math.pow(line.getEndY() - line.getStartY(), 2));
+            }
+        }
+        return 0;
     }
 }

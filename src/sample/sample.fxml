@@ -34,16 +34,16 @@
       </MenuBar>
    </top>
    <bottom>
-      <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #BBBBBB;" BorderPane.alignment="CENTER">
+      <ToolBar fx:id="toolBar" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #BBBBBB;" BorderPane.alignment="CENTER">
         <items>
             <Label fx:id="coordsLbl" prefHeight="25.0" prefWidth="100.0" text="0;0" />
             <Label fx:id="coordsLbl1" layoutX="10.0" layoutY="13.0" prefHeight="25.0" prefWidth="50.0" text="Coords:" />
-            <Button fx:id="boopBTN3" layoutX="168.0" layoutY="13.0" mnemonicParsing="false" onAction="#circle" text="circle" />
-          <Button fx:id="boopBTN" mnemonicParsing="false" onAction="#ellipsis" text="ellipsis" />
-            <Button fx:id="boopBTN1" layoutX="168.0" layoutY="13.0" mnemonicParsing="false" onAction="#line" text="line" />
-            <Button fx:id="boopBTN11" layoutX="220.0" layoutY="13.0" mnemonicParsing="false" onAction="#wierdLine" text="wierd" />
-            <Button fx:id="boopBTN2" layoutX="168.0" layoutY="13.0" mnemonicParsing="false" onAction="#rectangle" text="rect" />
-            <Button fx:id="boopBTN112" layoutX="263.0" layoutY="13.0" mnemonicParsing="false" onAction="#wierdRectangle" text="wierd2" />
+            <Button fx:id="circleBtn" layoutX="168.0" layoutY="13.0" mnemonicParsing="false" onAction="#circle" text="circle" />
+          <Button fx:id="ellipsisBtn" mnemonicParsing="false" onAction="#ellipsis" text="ellipsis" />
+            <Button fx:id="lineBtn" layoutX="168.0" layoutY="13.0" mnemonicParsing="false" onAction="#line" text="line" />
+            <Button fx:id="polylineBtn" layoutX="220.0" layoutY="13.0" mnemonicParsing="false" onAction="#wierdLine" text="wierd" />
+            <Button fx:id="rectangleBtn" layoutX="168.0" layoutY="13.0" mnemonicParsing="false" onAction="#rectangle" text="rect" />
+            <Button fx:id="polygonBtn" layoutX="263.0" layoutY="13.0" mnemonicParsing="false" onAction="#wierdRectangle" text="wierd2" />
             <Button fx:id="boopBTN1121" layoutX="431.0" layoutY="13.0" mnemonicParsing="false" onAction="#cursor" text="cursor" />
             <Button fx:id="boopBTN111" layoutX="272.0" layoutY="13.0" mnemonicParsing="false" onAction="#manageCoords" text="coords" />
             <ColorPicker fx:id="colorPicker" />

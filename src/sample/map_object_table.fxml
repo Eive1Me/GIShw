@@ -14,6 +14,7 @@
             <TableColumn fx:id="layer" prefWidth="75.0" text="Слой" />
             <TableColumn fx:id="area" prefWidth="75.0" text="Площадь" />
             <TableColumn fx:id="perimeter" prefWidth="75.0" text="Периметр" />
+            <TableColumn fx:id="length" prefWidth="75.0" text="Длина" />
         </columns>
       </TableView>
    </children>
