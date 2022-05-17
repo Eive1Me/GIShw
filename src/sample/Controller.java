@@ -310,12 +310,18 @@ public class Controller implements Initializable {
             );
 
             ObjectTableController controller = loader.getController();
-            controller.initData(mapObjects);
+            controller.initData(mapObjects, this);
 
             stage.show();
 
             return stage;
         }
+    }
+
+    public void deleteObject(MapObject object) {
+        mapObjects.remove(object);
+        pane.getChildren().remove(object.getShape());
+        System.out.println("deleted successfully");
     }
 
     public void manageCoords(){

@@ -36,7 +36,10 @@ public class ObjectTableController {
     TableColumn perimeter;
     @FXML
     TableColumn length;
-    public void initData(ArrayList<MapObject> data) {
+    Controller controller;
+    public void initData(ArrayList<MapObject> data, Controller controller) {
+        this.controller = controller;
+
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
@@ -92,5 +95,11 @@ public class ObjectTableController {
 
         ObservableList<MapObject> list = FXCollections.observableArrayList(data);
         table.setItems(list);
+    }
+
+
+    public void delete() {
+        controller.deleteObject((MapObject) table.getSelectionModel().getSelectedItem());
+        table.getItems().remove(table.getSelectionModel().getSelectedItem());
     }
 }

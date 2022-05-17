@@ -17,5 +17,10 @@
             <TableColumn fx:id="length" prefWidth="75.0" text="Длина" />
         </columns>
       </TableView>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="400.0">
+        <items>
+          <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#delete" text="Удалить" />
+        </items>
+      </ToolBar>
    </children>
 </AnchorPane>
