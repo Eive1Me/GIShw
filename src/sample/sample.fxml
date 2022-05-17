@@ -22,6 +22,14 @@
               <MenuItem mnemonicParsing="false" onAction="#openObjectTable" text="Таблица" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Данные">
+              <items>
+                <MenuItem fx:id="longestRoad" mnemonicParsing="false" onAction="#longestRoad" text="Самая длинная дорога" />
+                  <MenuItem mnemonicParsing="false" onAction="#shortestRoad" text="Самая короткая дорога" />
+                  <MenuItem fx:id="allRoads" mnemonicParsing="false" onAction="#allRoads" text="Длина всех дорог" />
+                  <MenuItem fx:id="biggestLake" mnemonicParsing="false" onAction="#biggestLake" text="Самое большое озеро" />
+              </items>
+            </Menu>
         </menus>
       </MenuBar>
    </top>

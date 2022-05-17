@@ -776,4 +776,101 @@ public class Controller implements Initializable {
         invalidDataAlert.setContentText(message);
         invalidDataAlert.showAndWait();
     }
+
+    public void shortestRoad() {
+        if (imgView.getImage() == null) {
+            throwNoMapError();
+        }
+        else {
+            ArrayList<MapObject> roads = (ArrayList<MapObject>) mapObjects.clone();
+            roads.removeIf(a -> !a.getShape().getClass().getName().toLowerCase().contains("line"));
+            if (roads.size() == 0) {
+                statisticsAlert("Нет дорог", "На этой карте не найдено дорог!");
+            }
+            else {
+                MapObject shortestRoad = roads.get(0);
+                for (MapObject road : roads) {
+                    if (road.getLength() < shortestRoad.getLength())
+                        shortestRoad = road;
+                }
+
+                statisticsAlert("Самая короткая дорога", shortestRoad.getName() + ", длина: " + shortestRoad.getLength());
+            }
+        }
+    }
+
+    public void longestRoad() {
+        if (imgView.getImage() == null) {
+            throwNoMapError();
+        }
+        else {
+            ArrayList<MapObject> roads = (ArrayList<MapObject>) mapObjects.clone();
+            roads.removeIf(a -> !a.getShape().getClass().getName().toLowerCase().contains("line"));
+            if (roads.size() == 0) {
+                statisticsAlert("Нет дорог", "На этой карте не найдено дорог!");
+            }
+            else {
+                MapObject shortestRoad = roads.get(0);
+                for (MapObject road : roads) {
+                    if (road.getLength() > shortestRoad.getLength())
+                        shortestRoad = road;
+                }
+
+                statisticsAlert("Самая длинная дорога", shortestRoad.getName() + ", длина: " + shortestRoad.getLength());
+            }
+        }
+    }
+
+    public void allRoads() {
+        if (imgView.getImage() == null) {
+            throwNoMapError();
+        }
+        else {
+            ArrayList<MapObject> roads = (ArrayList<MapObject>) mapObjects.clone();
+            roads.removeIf(a -> !a.getShape().getClass().getName().toLowerCase().contains("line"));
+            if (roads.size() == 0) {
+                statisticsAlert("Нет дорог", "На этой карте не найдено дорог!");
+            }
+            else {
+                double sum = 0;
+                for (MapObject road : roads) {
+                    sum += road.getLength();
+                }
+
+                statisticsAlert("Сумма длин всех дорог", Double.toString(sum));
+            }
+        }
+    }
+
+    public void biggestLake() {
+        if (imgView.getImage() == null) {
+            throwNoMapError();
+        }
+        else {
+            ArrayList<MapObject> lakes = (ArrayList<MapObject>) mapObjects.clone();
+            lakes.removeIf(a -> !a.getName().toLowerCase().contains("озеро") && !a.getDescription().toLowerCase().contains("озеро"));
+            if (lakes.size() == 0) {
+                statisticsAlert("Нет озер", "На этой карте не найдено озер!");
+            }
+            else {
+                MapObject biggestLake = lakes.get(0);
+                for (MapObject lake : lakes) {
+                    if (lake.getArea() > biggestLake.getArea())
+                        biggestLake = lake;
+                }
+
+                statisticsAlert("Самое большое озеро", biggestLake.getName() + ", площадь: " + biggestLake.getArea());
+            }
+        }
+    }
+
+    public void statisticsAlert(String header, String content) {
+        final Alert invalidDataAlert = new Alert(Alert.AlertType.INFORMATION);
+
+        invalidDataAlert.setTitle("Статистика");
+        invalidDataAlert.setHeaderText(header);
+        invalidDataAlert.setResizable(true);
+        invalidDataAlert.setContentText(content);
+        invalidDataAlert.showAndWait();
+    }
 }
