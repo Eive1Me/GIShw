@@ -71,66 +71,90 @@ public class MapObject {
         this.layer = layer;
     }
 
-    public double getArea() {
+    public int getArea() {
         String shapeName = shape.getClass().getName();
+        double result = 0;
+
         switch (shapeName) {
             case "javafx.scene.shape.Circle": {
                 Circle circle = (Circle) shape;
-                return Math.pow(circle.getRadius(), 2)*3.14;
+                result = Math.pow(circle.getRadius(), 2)*3.14;
+                break;
             }
             case "javafx.scene.shape.Rectangle": {
                 Rectangle rectangle = (Rectangle) shape;
-                return rectangle.getHeight()*rectangle.getWidth();
+                result = rectangle.getHeight()*rectangle.getWidth();
+                break;
             }
             case "javafx.scene.shape.Ellipse": {
                 Ellipse ellipse = (Ellipse) shape;
-                return ellipse.getRadiusX()*ellipse.getRadiusY()*3.14;
+                result = ellipse.getRadiusX()*ellipse.getRadiusY()*3.14;
+                break;
             }
             case "javafx.scene.shape.Polygon": {
-                //todo
-//                return shape.getScaleX();
-//                Polygon polygon = (Polygon) shape;
-                return 0;
+                Polygon polygon = (Polygon) shape;
+                double res = 0;
+                List<Double> points = polygon.getPoints();
+                double midSide = 0;
+                for (int i = 0; i <= points.size()-3; i+= 2) {
+                    midSide += Math.sqrt(Math.pow(points.get(i)-points.get(i+2), 2) + Math.pow(points.get(i+1)-points.get(i+3), 2));
+                }
+                midSide = midSide / (points.size() / 2);
+
+                double sideAmount = points.size() / 2;
+                res = sideAmount * Math.pow(midSide, 2) * (1.0 / Math.tan(Math.PI / sideAmount))/4;
+                result = res;
+                break;
             }
             case "javafx.scene.shape.Line":
             case "javafx.scene.shape.Path": {
                 return 0;
             }
         }
-        return 0;
+        return (int) Math.round(result);
     }
 
-    public double getPerimeter() {
+    public int getPerimeter() {
         String shapeName = shape.getClass().getName();
+        double result = 0;
+
         switch (shapeName) {
             case "javafx.scene.shape.Circle": {
                 Circle circle = (Circle) shape;
-                return 2*3.14*circle.getRadius();
+                result = 2*3.14*circle.getRadius();
+                break;
             }
             case "javafx.scene.shape.Rectangle": {
                 Rectangle rectangle = (Rectangle) shape;
-                return 2*(rectangle.getHeight()+rectangle.getWidth());
+                result = 2*(rectangle.getHeight()+rectangle.getWidth());
+                break;
             }
             case "javafx.scene.shape.Ellipse": {
                 Ellipse ellipse = (Ellipse) shape;
-                return 4*(ellipse.getRadiusX()*ellipse.getRadiusY()*3.14 + Math.pow((ellipse.getRadiusX()-ellipse.getRadiusY()), 2)) / (ellipse.getRadiusY() + ellipse.getRadiusX());
+                result = 4*(ellipse.getRadiusX()*ellipse.getRadiusY()*3.14 + Math.pow((ellipse.getRadiusX()-ellipse.getRadiusY()), 2)) / (ellipse.getRadiusY() + ellipse.getRadiusX());
+                break;
             }
             case "javafx.scene.shape.Polygon": {
                 Polygon polygon = (Polygon) shape;
+                double res = 0;
                 List<Double> points = polygon.getPoints();
-                //todo
-                return 0;
+                for (int i = 0; i <= points.size()-3; i+= 2) {
+                    res += Math.sqrt(Math.pow(points.get(i)-points.get(i+2), 2) + Math.pow(points.get(i+1)-points.get(i+3), 2));
+                }
+                result = res;
+                break;
             }
             case "javafx.scene.shape.Line":
             case "javafx.scene.shape.Polyline": {
                 return 0;
             }
         }
-        return 0;
+        return (int) Math.round(result);
     }
 
-    public double getLength() {
+    public int getLength() {
         String shapeName = shape.getClass().getName();
+        double resLength = 0;
         switch (shapeName) {
             case "javafx.scene.shape.Polyline": {
                 double result = 0;
@@ -139,13 +163,15 @@ public class MapObject {
                 for (int i = 0; i <= points.size()-3; i+= 2) {
                     result += Math.sqrt(Math.pow(points.get(i)-points.get(i+2), 2) + Math.pow(points.get(i+1)-points.get(i+3), 2));
                 }
-                return result;
+                resLength = result;
+                break;
             }
             case "javafx.scene.shape.Line": {
                 Line line = (Line) shape;
-                return Math.sqrt(Math.pow(line.getEndX() - line.getStartX(), 2) + Math.pow(line.getEndY() - line.getStartY(), 2));
+                resLength = Math.sqrt(Math.pow(line.getEndX() - line.getStartX(), 2) + Math.pow(line.getEndY() - line.getStartY(), 2));
+                break;
             }
         }
-        return 0;
+        return (int) Math.round(resLength);
     }
 }

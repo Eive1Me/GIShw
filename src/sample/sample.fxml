@@ -22,14 +22,6 @@
               <MenuItem mnemonicParsing="false" onAction="#openObjectTable" text="Таблица" />
             </items>
           </Menu>
-            <Menu mnemonicParsing="false" text="Фигуры">
-              <items>
-                  <MenuItem mnemonicParsing="false" text="Линия" />
-                <MenuItem mnemonicParsing="false" text="Круг" />
-                  <MenuItem mnemonicParsing="false" text="Прямоугольник" />
-                  <MenuItem mnemonicParsing="false" text="Треугольник" />
-              </items>
-            </Menu>
         </menus>
       </MenuBar>
    </top>
