@@ -47,6 +47,7 @@
             <Button fx:id="boopBTN1121" layoutX="431.0" layoutY="13.0" mnemonicParsing="false" onAction="#cursor" text="cursor" />
             <Button fx:id="boopBTN111" layoutX="272.0" layoutY="13.0" mnemonicParsing="false" onAction="#manageCoords" text="coords" />
             <ColorPicker fx:id="colorPicker" />
+            <Button mnemonicParsing="false" onAction="#affectedArea" text="Зона заражения" />
         </items>
       </ToolBar>
    </bottom>

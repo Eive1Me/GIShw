@@ -1,5 +1,6 @@
 package sample;
 
+import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -9,11 +10,18 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.*;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import javafx.scene.transform.Rotate;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -872,5 +880,130 @@ public class Controller implements Initializable {
         invalidDataAlert.setResizable(true);
         invalidDataAlert.setContentText(content);
         invalidDataAlert.showAndWait();
+    }
+
+    String windDirection = "Ю";
+    public double[] getAffectedAreaInput(double defWind, double defDepth){
+        double[] result = new double[2];
+        TextInputDialog nameDialog = new TextInputDialog(Double.toString(defWind));
+
+        nameDialog.setTitle("Скорость ветра");
+        nameDialog.setHeaderText("Введите скорость ветра:");
+//        nameDialog.setContentText("Имя:");
+
+        Optional<String> wind = nameDialog.showAndWait();
+        result[0] = Double.parseDouble(wind.get());
+
+        TextInputDialog dialog = new TextInputDialog(Double.toString(defDepth));
+
+        dialog.setTitle("Глубина заражения");
+        dialog.setHeaderText("Введите глубину заражения:");
+
+        Optional<String> depth = dialog.showAndWait();
+        result[1] = Double.parseDouble(depth.get());
+
+        if (result[0] > 0.5) {
+            TextInputDialog dialog3 = new TextInputDialog("Ю");
+
+            dialog3.setTitle("Направление ветра");
+            dialog3.setHeaderText("Введите направление ветра:");
+
+            Optional<String> windDir = dialog3.showAndWait();
+            windDirection = windDir.get();
+        }
+
+        return result;
+    }
+
+    public void affectedArea() {
+        removeHandlers();
+        mouseClickHandler = event -> {
+          Coords coords = new Coords(event.getX(), event.getY());
+          double[] input = getAffectedAreaInput(1, 100);
+
+          if (input[0] <= 0.5) {
+              Circle posArea = new Circle();
+              posArea.setCenterX(coords.x);
+              posArea.setCenterY(coords.y);
+              posArea.setRadius(input[1]);
+              posArea.setStrokeWidth(1.0);
+              posArea.setStroke(Color.BLACK);
+              Image map = new Image(new File("C:/My stuff/IDEAProjects/gis/simple/src/sample/bg.png").toURI().toString());
+              ImagePattern pattern = new ImagePattern(map, 20, 20, 40, 40, false);
+              posArea.setOpacity(0.6);
+              posArea.setFill(pattern);
+              posArea.setId("affectedArea");
+
+              pane.getChildren().add(posArea);
+          }
+          else {
+              Path path = new Path();
+              Image map = new Image(new File("src/sample/bg.png").toURI().toString());
+              ImagePattern pattern = new ImagePattern(map, 20, 20, 40, 40, false);
+              path.setOpacity(0.6);
+              path.setFill(pattern);
+              path.setStroke(Color.BLACK);
+              path.setFillRule(FillRule.EVEN_ODD);
+
+              if (input[0] > 0.5 && input[0] <= 1) {
+                  MoveTo moveTo = new MoveTo();
+                  moveTo.setX(coords.x + input[1]);
+                  moveTo.setY(coords.y);
+
+                  ArcTo arcToInner = new ArcTo();
+                  arcToInner.setX(coords.x - input[1]);
+                  arcToInner.setY(coords.y);
+                  arcToInner.setRadiusX(input[1]);
+                  arcToInner.setRadiusY(input[1]);
+
+                  path.getElements().add(moveTo);
+                  path.getElements().add(arcToInner);
+              }
+              else if (input[0] > 1.0) {
+                  MoveTo moveTo = new MoveTo();
+                  moveTo.setX(coords.x);
+                  moveTo.setY(coords.y);
+
+                  LineTo lineTo = new LineTo();
+                  ArcTo arcToInner = new ArcTo();
+
+                  if (input[0] <= 2) {
+                      lineTo.setX(coords.x - (input[1]/2));
+                      lineTo.setY(coords.y - input[1]);
+
+                      arcToInner.setX(coords.x + (input[1]/2));
+                      arcToInner.setY(coords.y - input[1]);
+                  }
+                  else {
+                      lineTo.setX(coords.x - (input[1]/4));
+                      lineTo.setY(coords.y - input[1]);
+
+                      arcToInner.setX(coords.x + (input[1]/4));
+                      arcToInner.setY(coords.y - input[1]);
+                  }
+
+                  arcToInner.setRadiusX(input[1]*2);
+                  arcToInner.setRadiusY(input[1]*2);
+
+                  path.getElements().add(moveTo);
+                  path.getElements().add(lineTo);
+                  path.getElements().add(arcToInner);
+              }
+              double angle = 0;
+              switch (windDirection) {
+                  case "Ю": {angle = 180; break;}
+                  case "В": {angle = 90; break;}
+                  case "З": {angle = -90; break;}
+                  case "ЮЗ": {angle = 225; break;}
+                  case "ЮВ": {angle = 135; break;}
+                  case "СЗ": {angle = -45; break;}
+                  case "СВ": {angle = 45; break;}
+              }
+              //Adding the transformation to rectangle
+              path.getTransforms().add(new Rotate(angle, coords.x, coords.y));
+              pane.getChildren().add(path);
+          }
+        };
+        pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mouseClickHandler);
     }
 }
