@@ -1,6 +1,11 @@
 package sample;
 
 import com.sun.javafx.binding.StringFormatter;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -10,6 +15,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -18,6 +25,7 @@ import javafx.scene.shape.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
 import sample.databasemanage.entity.Coordinate;
 import sample.databasemanage.entity.Map;
 import sample.databasemanage.entity.Radius;
@@ -35,10 +43,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -60,9 +65,15 @@ public class Controller implements Initializable {
     @FXML
     ColorPicker colorPicker;
     @FXML
-    ToolBar toolBar;
+    ToolBar toolBar,toolBar1,toolBar2;
+    @FXML
+    Button circleBtn, boopBTN1121, polygonBtn, polylineBtn, rectangleBtn, lineBtn, ellipsisBtn;
+    @FXML
+    TableView table;
+    @FXML
+    TableColumn tableLayers;
 
-   EventHandler<MouseEvent> getDetailsEvent(MapObject object, String name, String desc) {
+    EventHandler<MouseEvent> getDetailsEvent(MapObject object, String name, String desc) {
        Alert al = new Alert(Alert.AlertType.NONE);
        return new EventHandler<MouseEvent>() {
            @Override
@@ -80,9 +91,21 @@ public class Controller implements Initializable {
     FileChooser fileChooser = new FileChooser();
     File file;
     public static BufferedImage img2;
-    BufferedImage img;
+    BufferedImage img,tmpI;
 
     public static double[] coordsMas = null;
+
+    List<Integer> layers = new ArrayList<>();
+    int activeLayer;
+
+    public int getActiveLayer() {
+        return activeLayer;
+    }
+
+    public void setActiveLayer(int activeLayer) {
+        this.activeLayer = activeLayer;
+    }
+
 
     //map data
     ArrayList<MapObject> mapObjects;
@@ -181,6 +204,8 @@ public class Controller implements Initializable {
                 mapObjects = new ArrayList<>();
                 clearObjects();
                 toolBar.setVisible(true);
+                toolBar1.setVisible(true);
+                toolBar2.setVisible(true);
             } catch (NullPointerException ignored){}
         } catch (IOException ignored){}
     }
@@ -446,10 +471,23 @@ public class Controller implements Initializable {
         }
     }
 
+    boolean tmp = false;
+
     public void setCoords(MouseEvent e){
     Coords mPos = new Coords(e.getSceneX(), e.getSceneY() - 25);
     Coords kPos = null;
         if (coordsMas != null) {
+            if (!tmp) {
+                setStartShirota((int) coordsMas[0]);
+                setStartDolgota((int) coordsMas[1]);
+                setEndShirota((int) coordsMas[2]);
+                setEndDolgota((int) coordsMas[3]);
+                setStartX(coordsMas[4]);
+                setStartY(coordsMas[5]);
+                setEndX(coordsMas[6]);
+                setEndY(coordsMas[7]);
+                tmp = true;
+            }
             kPos = new Coords(coordsMas[1] + mPos.y * ((coordsMas[3] - coordsMas[1]) / (coordsMas[7] - coordsMas[5])), coordsMas[0] + mPos.x * ((coordsMas[2] - coordsMas[0]) / (coordsMas[6] - coordsMas[4])));
             coordsLbl2.setVisible(true);
             coordsLbl2.setText(Math.round(kPos.x / 60) + "°" + Math.round(kPos.x % 60) + "'; " + Math.round(kPos.y / 60) + "°" + Math.round(kPos.y % 60) + "'");
@@ -500,7 +538,7 @@ public class Controller implements Initializable {
 
                 String[] result;
                 result = getValues("Линия","Расстояние");
-                MapObject a = addToList(result[0],result[1],line[0]);
+                MapObject a = addToList(result[0],result[1],line[0],getActiveLayer());
 
                 //on click show details
                 line[0].setOnMouseClicked(getDetailsEvent(a, result[0], result[1]));
@@ -545,7 +583,7 @@ public class Controller implements Initializable {
                 ellipses[0].setRadiusY(start[0].yDist(end[0])/2);
                 String[] result;
                 result = getValues("Озеро","Территория");
-                MapObject m = addToList(result[0],result[1],ellipses[0]);
+                MapObject m = addToList(result[0],result[1],ellipses[0],getActiveLayer());
 
                 //on click show details
                 ellipses[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
@@ -590,7 +628,7 @@ public class Controller implements Initializable {
                 circles[0].setRadius(start[0].distanceTo(end[0])/2);
                 String[] result;
                 result = getValues("Круг","Территория");
-                MapObject m = addToList(result[0],result[1],circles[0]);
+                MapObject m = addToList(result[0],result[1],circles[0],getActiveLayer());
 
                 //on click show details
                 circles[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
@@ -629,7 +667,7 @@ public class Controller implements Initializable {
                     coordsArr.clear();
                     String[] result;
                     result = getValues("Путь","Дорога");
-                    MapObject m = addToList(result[0],result[1],line[0]);
+                    MapObject m = addToList(result[0],result[1],line[0],getActiveLayer());
 
                     //on click show details
                     line[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
@@ -673,7 +711,7 @@ public class Controller implements Initializable {
                 rectangles[0].setHeight(start[0].yDist(end[0]));
                 String[] result;
                 result = getValues("Прямоугольник","Здание");
-                MapObject m = addToList(result[0],result[1],rectangles[0]);
+                MapObject m = addToList(result[0],result[1],rectangles[0],getActiveLayer());
 
                 //on click show details
                 rectangles[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
@@ -713,7 +751,7 @@ public class Controller implements Initializable {
                     coordsArr.clear();
                     String[] result;
                     result = getValues("Многоугольник","Территория");
-                    MapObject m = addToList(result[0],result[1],line[0]);
+                    MapObject m = addToList(result[0],result[1],line[0],getActiveLayer());
 
                     //on click show details
                     line[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
@@ -753,16 +791,62 @@ public class Controller implements Initializable {
         return result;
     }
 
-    public MapObject addToList(String name, String desc, Shape shape){
+    public MapObject addToList(String name, String desc, Shape shape,int layer){
         MapObject m = new MapObject(name,desc,shape,1);
         mapObjects.add(m);
         return m;
     }
 
+    public void initButtons(){
+        List<Button> buttonList = Arrays.asList(circleBtn, boopBTN1121, polygonBtn, polylineBtn, rectangleBtn, lineBtn, ellipsisBtn);
+        for (Button b:buttonList) {
+            try {
+                tmpI = ImageIO.read(new FileInputStream("src/sample/res/" + b.getId() + ".png"));
+                ImageView imageView = new ImageView(SwingFXUtils.toFXImage(tmpI,null));
+                b.setGraphic(imageView);
+                imageView.fitWidthProperty().bind(b.widthProperty().divide(2.3));
+                imageView.setPreserveRatio(true);
+
+                b.setMaxWidth(40);
+            } catch (IOException e) {
+                System.out.println("Did not work for " + b.getId());
+            }
+        }
+    }
+
+    public void initLayers(){
+        //Вот они слева направо
+        layers.addAll(Arrays.asList(1,2,3));
+
+        tableLayers.setCellValueFactory(new PropertyValueFactory<>("id"));
+        tableLayers.setCellValueFactory((Callback<TableColumn.CellDataFeatures<Integer, String>, ObservableValue<String>>) p -> {
+            if (p.getValue() != null) {
+                return new SimpleStringProperty(Integer.toString(layers.get(p.getValue()-1)));
+            } else {
+                return new SimpleStringProperty("1");
+            }
+        });
+        ObservableList<Integer> list = FXCollections.observableList(layers);
+        table.setItems(list);
+        table.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            if(table.getSelectionModel().getSelectedItem() != null)
+            {
+                int pick = (int) table.getSelectionModel().getSelectedItem();
+                setActiveLayer(layers.get(pick-1));
+                System.out.println(getActiveLayer());
+            }
+        });
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        setActiveLayer(1);
         toolBar.setVisible(false);
+        toolBar1.setVisible(false);
+        toolBar2.setVisible(false);
         coordsLbl2.setVisible(false);
+        initButtons();
+        initLayers();
         try {
             coordinateRepo = new CoordinateRepo();
             mapObjectRepo = new MapObjectRepo();
