@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.DbMapsController">
+   <children>
+      <TableView fx:id="table" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columns>
+          <TableColumn id="map" fx:id="map" prefWidth="94.19999694824219" text="Карта" />
+          <TableColumn id="object_amount" fx:id="object_amount" prefWidth="84.79998779296875" text="Количество объектов" />
+        </columns>
+      </TableView>
+      <Button mnemonicParsing="false" onAction="#chooseMap" text="Открыть" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="20.0" />
+      <Button mnemonicParsing="false" onAction="#cancel" text="Отмена" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="100.0" />
+   </children>
+</AnchorPane>

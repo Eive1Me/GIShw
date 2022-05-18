@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ObjectTableController">
+   <children>
+      <TableView fx:id="table" layoutX="6.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columns>
+          <TableColumn fx:id="name" prefWidth="75.0" text="Название" />
+          <TableColumn fx:id="description" prefWidth="75.0" text="Описание" />
+            <TableColumn fx:id="shape" prefWidth="75.0" text="Фигура" />
+            <TableColumn fx:id="color" prefWidth="75.0" text="Цвет" />
+            <TableColumn fx:id="layer" prefWidth="75.0" text="Слой" />
+            <TableColumn fx:id="area" prefWidth="75.0" text="Площадь" />
+            <TableColumn fx:id="perimeter" prefWidth="75.0" text="Периметр" />
+            <TableColumn fx:id="length" prefWidth="75.0" text="Длина" />
+        </columns>
+      </TableView>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="400.0">
+        <items>
+          <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#delete" text="Удалить" />
+        </items>
+      </ToolBar>
+   </children>
+</AnchorPane>
