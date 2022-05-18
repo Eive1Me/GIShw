@@ -5,7 +5,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -36,17 +36,10 @@
    <bottom>
       <ToolBar fx:id="toolBar" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #BBBBBB;" BorderPane.alignment="CENTER">
         <items>
+            <Label fx:id="coordsLbl2" layoutX="10.0" layoutY="13.0" prefHeight="25.0" text="0;0" />
             <Label fx:id="coordsLbl" prefHeight="25.0" prefWidth="100.0" text="0;0" />
             <Label fx:id="coordsLbl1" layoutX="10.0" layoutY="13.0" prefHeight="25.0" prefWidth="50.0" text="Coords:" />
-            <Button fx:id="circleBtn" layoutX="168.0" layoutY="13.0" mnemonicParsing="false" onAction="#circle" text="circle" />
-          <Button fx:id="ellipsisBtn" mnemonicParsing="false" onAction="#ellipsis" text="ellipsis" />
-            <Button fx:id="lineBtn" layoutX="168.0" layoutY="13.0" mnemonicParsing="false" onAction="#line" text="line" />
-            <Button fx:id="polylineBtn" layoutX="220.0" layoutY="13.0" mnemonicParsing="false" onAction="#wierdLine" text="wierd" />
-            <Button fx:id="rectangleBtn" layoutX="168.0" layoutY="13.0" mnemonicParsing="false" onAction="#rectangle" text="rect" />
-            <Button fx:id="polygonBtn" layoutX="263.0" layoutY="13.0" mnemonicParsing="false" onAction="#wierdRectangle" text="wierd2" />
-            <Button fx:id="boopBTN1121" layoutX="431.0" layoutY="13.0" mnemonicParsing="false" onAction="#cursor" text="cursor" />
             <Button fx:id="boopBTN111" layoutX="272.0" layoutY="13.0" mnemonicParsing="false" onAction="#manageCoords" text="coords" />
-            <ColorPicker fx:id="colorPicker" />
         </items>
       </ToolBar>
    </bottom>
@@ -58,4 +51,29 @@
          </children>
       </AnchorPane>
    </center>
+   <left>
+      <ToolBar orientation="VERTICAL" prefHeight="40.0" prefWidth="60.0" BorderPane.alignment="CENTER">
+         <items>
+            <Button fx:id="circleBtn" mnemonicParsing="false" onAction="#circle" text="circle" />
+          <Button fx:id="ellipsisBtn" mnemonicParsing="false" onAction="#ellipsis" text="ellipsis" />
+            <Button fx:id="lineBtn" mnemonicParsing="false" onAction="#line" text="line" />
+            <Button fx:id="polylineBtn" mnemonicParsing="false" onAction="#wierdLine" text="wierd" />
+            <Button fx:id="rectangleBtn" mnemonicParsing="false" onAction="#rectangle" text="rect" />
+            <Button fx:id="polygonBtn" mnemonicParsing="false" onAction="#wierdRectangle" text="wierd2" />
+            <Button fx:id="boopBTN1121" mnemonicParsing="false" onAction="#cursor" text="cursor" />
+         </items>
+      </ToolBar>
+   </left>
+   <right>
+      <ToolBar orientation="VERTICAL" BorderPane.alignment="CENTER">
+        <items>
+            <ColorPicker fx:id="colorPicker" />
+            <ScrollPane prefHeight="200.0" prefWidth="100.0">
+               <content>
+                  <AnchorPane prefHeight="200.0" />
+               </content>
+            </ScrollPane>
+        </items>
+      </ToolBar>
+   </right>
 </BorderPane>

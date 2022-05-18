@@ -56,15 +56,16 @@ public class CoordsController implements Initializable {
     }
 
     public void confirmCoords(){
-        Controller controller = Controller.getInstance();
-        controller.setStartShirota(Integer.parseInt(llshirota1.getText())*60 + Integer.parseInt(llshirota2.getText()));
-        controller.setStartDolgota(Integer.parseInt(lldolgota1.getText())*60 + Integer.parseInt(lldolgota2.getText()));
-        controller.setEndShirota(Integer.parseInt(urshirota1.getText())*60 + Integer.parseInt(urshirota2.getText()));
-        controller.setEndDolgota(Integer.parseInt(urdolgota1.getText())*60 + Integer.parseInt(urdolgota2.getText()));
-        controller.setStartX(llC.x);
-        controller.setStartY(llC.y);
-        controller.setEndX(urC.x);
-        controller.setEndY(urC.y);
+
+        Controller.coordsMas = new double[]{Double.parseDouble(llshirota1.getText())*60 + Double.parseDouble(llshirota2.getText()),
+                                            Double.parseDouble(lldolgota1.getText())*60 + Double.parseDouble(lldolgota2.getText()),
+                                            Double.parseDouble(urshirota1.getText())*60 + Double.parseDouble(urshirota2.getText()),
+                                            Double.parseDouble(urdolgota1.getText())*60 + Double.parseDouble(urdolgota2.getText()),
+                                            llC.x,
+                                            llC.y,
+                                            urC.x,
+                                            urC.y};
+
         Stage stage = (Stage) llCrdsLbl.getScene().getWindow();
         stage.close();
     }

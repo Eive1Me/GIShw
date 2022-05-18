@@ -1,5 +1,6 @@
 package sample;
 
+import com.sun.javafx.binding.StringFormatter;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -53,6 +54,8 @@ public class Controller implements Initializable {
     @FXML
     Label coordsLbl;
     @FXML
+    Label coordsLbl2;
+    @FXML
     ImageView imgView;
     @FXML
     ColorPicker colorPicker;
@@ -78,6 +81,8 @@ public class Controller implements Initializable {
     File file;
     public static BufferedImage img2;
     BufferedImage img;
+
+    public static double[] coordsMas = null;
 
     //map data
     ArrayList<MapObject> mapObjects;
@@ -442,7 +447,14 @@ public class Controller implements Initializable {
     }
 
     public void setCoords(MouseEvent e){
-        coordsLbl.setText(new Coords(e.getSceneX(), e.getSceneY()-25).toString());
+    Coords mPos = new Coords(e.getSceneX(), e.getSceneY() - 25);
+    Coords kPos = null;
+        if (coordsMas != null) {
+            kPos = new Coords(coordsMas[1] + mPos.y * ((coordsMas[3] - coordsMas[1]) / (coordsMas[7] - coordsMas[5])), coordsMas[0] + mPos.x * ((coordsMas[2] - coordsMas[0]) / (coordsMas[6] - coordsMas[4])));
+            coordsLbl2.setVisible(true);
+            coordsLbl2.setText(Math.round(kPos.x / 60) + "°" + Math.round(kPos.x % 60) + "'; " + Math.round(kPos.y / 60) + "°" + Math.round(kPos.y % 60) + "'");
+        }
+        coordsLbl.setText(mPos.toString());
     }
 
     //==========================drawing obj==============================
@@ -750,13 +762,14 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         toolBar.setVisible(false);
+        coordsLbl2.setVisible(false);
         try {
             coordinateRepo = new CoordinateRepo();
             mapObjectRepo = new MapObjectRepo();
             radiusRepo = new RadiusRepo();
             mapRepo = new MapRepo();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
         }
         pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
         pane.addEventHandler(MouseEvent.MOUSE_DRAGGED,mouseDraggedHandler);
