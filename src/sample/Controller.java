@@ -250,6 +250,11 @@ public class Controller implements Initializable {
         endShirota = chosenMap.getEndShirota();
         endDolgota = chosenMap.getEndDolgota();
 
+        startX = chosenMap.getStartX();
+        startY = chosenMap.getStartY();
+        endX = chosenMap.getEndX();
+        endY = chosenMap.getEndY();
+
         try {
             img = ImageIO.read(new ByteArrayInputStream(chosenMap.getImage()));
             imgView.setImage(null);
@@ -753,8 +758,19 @@ public class Controller implements Initializable {
         return m;
     }
 
+    double lastX, lastY;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        pane.setOnMousePressed((MouseEvent event) -> {
+//            lastX = event.getX();
+//            lastY = event.getY();
+//            toFront();
+            //  postView.toFront();
+
+//            pane.setScaleX(1.2);
+//            pane.setScaleY(1.2);
+        });
+
         toolBar.setVisible(false);
         try {
             coordinateRepo = new CoordinateRepo();
