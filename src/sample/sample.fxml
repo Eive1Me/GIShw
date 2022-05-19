@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -72,6 +72,8 @@
                <value>
                   <Color red="1.0" green="1.0" blue="1.0" opacity="0.5" />
                </value></ColorPicker>
+            <Button mnemonicParsing="false" onAction="#addLayer" prefWidth="125.0" text="Добавить слой" textAlignment="CENTER" />
+            <Button layoutX="10.0" layoutY="39.0" mnemonicParsing="false" onAction="#delLayer" prefWidth="125.0" text="Удалить слой" textAlignment="CENTER" />
             <TableView fx:id="table" prefHeight="400.0" prefWidth="120.0">
               <columns>
                 <TableColumn fx:id="tableLayers" maxWidth="120.0" minWidth="-1.0" prefWidth="120" text="Слои" />

@@ -49,11 +49,6 @@ import java.util.stream.Collectors;
 
 public class Controller implements Initializable {
 
-    private static Controller instance = new Controller();
-    public static Controller getInstance(){
-        return instance;
-    }
-
     @FXML
     AnchorPane pane;
     @FXML
@@ -73,7 +68,7 @@ public class Controller implements Initializable {
     @FXML
     TableColumn tableLayers;
 
-    EventHandler<MouseEvent> getDetailsEvent(MapObject object, String name, String desc) {
+    EventHandler<MouseEvent> getDetailsEvent(MapObject object, String name, String desc, int layer) {
        Alert al = new Alert(Alert.AlertType.NONE);
        return new EventHandler<MouseEvent>() {
            @Override
@@ -83,7 +78,8 @@ public class Controller implements Initializable {
                String length = object.getShape().getClass().toString().toLowerCase().contains("line") ? "\nДлина: " + object.getLength() : "";
                String perimeter = object.getShape().getClass().toString().toLowerCase().contains("line") ? "" : "\nПериметр: " + object.getPerimeter();
                String area = object.getShape().getClass().toString().toLowerCase().contains("line") ? "" : "\nПлощадь: " + object.getArea();
-               al.setContentText(desc + length + perimeter + area);
+               String l = "\nСлой: " + layer;
+               al.setContentText(desc + length + perimeter + area + l);
                al.show();
            }
        };
@@ -315,7 +311,7 @@ public class Controller implements Initializable {
 //            shape.setFill(Color.TRANSPARENT);
             shape.setStrokeWidth(1.0);
             shape.setStroke(Color.BLACK);
-            shape.setOnMouseClicked(getDetailsEvent(a, a.getName(), a.getDescription()));
+            shape.setOnMouseClicked(getDetailsEvent(a, a.getName(), a.getDescription(),a.getLayer()));
             pane.getChildren().add(shape);
             System.out.println("drawn objects");
         }
@@ -541,7 +537,7 @@ public class Controller implements Initializable {
                 MapObject a = addToList(result[0],result[1],line[0],getActiveLayer());
 
                 //on click show details
-                line[0].setOnMouseClicked(getDetailsEvent(a, result[0], result[1]));
+                line[0].setOnMouseClicked(getDetailsEvent(a, result[0], result[1],getActiveLayer()));
             };
 
             pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
@@ -586,7 +582,7 @@ public class Controller implements Initializable {
                 MapObject m = addToList(result[0],result[1],ellipses[0],getActiveLayer());
 
                 //on click show details
-                ellipses[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
+                ellipses[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1],getActiveLayer()));
             };
 
             mouseClickHandler = event -> {
@@ -631,7 +627,7 @@ public class Controller implements Initializable {
                 MapObject m = addToList(result[0],result[1],circles[0],getActiveLayer());
 
                 //on click show details
-                circles[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
+                circles[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1],getActiveLayer()));
             };
 
             mouseClickHandler = event -> {
@@ -670,7 +666,7 @@ public class Controller implements Initializable {
                     MapObject m = addToList(result[0],result[1],line[0],getActiveLayer());
 
                     //on click show details
-                    line[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
+                    line[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1],getActiveLayer()));
                 }
             };
 
@@ -714,7 +710,7 @@ public class Controller implements Initializable {
                 MapObject m = addToList(result[0],result[1],rectangles[0],getActiveLayer());
 
                 //on click show details
-                rectangles[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
+                rectangles[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1],getActiveLayer()));
             };
 
             mouseClickHandler = event -> {
@@ -754,7 +750,7 @@ public class Controller implements Initializable {
                     MapObject m = addToList(result[0],result[1],line[0],getActiveLayer());
 
                     //on click show details
-                    line[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1]));
+                    line[0].setOnMouseClicked(getDetailsEvent(m, result[0], result[1],getActiveLayer()));
                 }
             };
 
@@ -792,7 +788,7 @@ public class Controller implements Initializable {
     }
 
     public MapObject addToList(String name, String desc, Shape shape,int layer){
-        MapObject m = new MapObject(name,desc,shape,1);
+        MapObject m = new MapObject(name,desc,shape,layer);
         mapObjects.add(m);
         return m;
     }
@@ -813,6 +809,26 @@ public class Controller implements Initializable {
             }
         }
     }
+    ObservableList<Integer> listObs = FXCollections.observableList(new ArrayList<Integer>());
+
+    public void addLayer(){
+        listObs.add(layers.get(layers.size()-1)+1);
+    }
+
+    public void delLayer(){
+        ArrayList<MapObject> tmp = new ArrayList<>();
+        for (MapObject m:mapObjects) {
+            System.out.println(m.getLayer() + " " + getActiveLayer());
+            if (m.getLayer()==getActiveLayer()) {
+                pane.getChildren().remove(m.getShape());
+                tmp.add(m);
+            }
+        }
+        mapObjects.removeAll(tmp);
+        listObs.remove(listObs.indexOf(getActiveLayer()));
+        table.getSelectionModel().select(layers.get(layers.indexOf(1)));
+        setActiveLayer(layers.get(0));
+    }
 
     public void initLayers(){
         //Вот они слева направо
@@ -821,18 +837,22 @@ public class Controller implements Initializable {
         tableLayers.setCellValueFactory(new PropertyValueFactory<>("id"));
         tableLayers.setCellValueFactory((Callback<TableColumn.CellDataFeatures<Integer, String>, ObservableValue<String>>) p -> {
             if (p.getValue() != null) {
-                return new SimpleStringProperty(Integer.toString(layers.get(p.getValue()-1)));
+                try {
+                    return new SimpleStringProperty(Integer.toString((p.getValue())));
+                } catch (IndexOutOfBoundsException e){
+                    return new SimpleStringProperty(Integer.toString(layers.indexOf(1)));
+                }
             } else {
                 return new SimpleStringProperty("1");
             }
         });
-        ObservableList<Integer> list = FXCollections.observableList(layers);
-        table.setItems(list);
+        listObs = FXCollections.observableList(layers);
+        table.setItems(listObs);
         table.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
             if(table.getSelectionModel().getSelectedItem() != null)
             {
                 int pick = (int) table.getSelectionModel().getSelectedItem();
-                setActiveLayer(layers.get(pick-1));
+                setActiveLayer(layers.get(layers.indexOf(pick)));
                 System.out.println(getActiveLayer());
             }
         });

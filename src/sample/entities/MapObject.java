@@ -33,7 +33,7 @@ public class MapObject {
         entity.setDescription(object.getDescription());
         if (sh.getFill() != null)
                 entity.setColor(sh.getFill().toString());
-        entity.setLayer(1);
+        entity.setLayer(object.getLayer());
         entity.setMapID(mapID);
 
         return entity;
