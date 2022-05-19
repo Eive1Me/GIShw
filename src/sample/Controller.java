@@ -287,10 +287,15 @@ public class Controller implements Initializable {
         //retrieve objects
         ArrayList<sample.databasemanage.entity.MapObject> mapObjectsDB = mapObjectRepo.selectByMapId(chosenMap.getId());
         mapObjects = new ArrayList<>();
+        layers = new ArrayList<>();
+        layers.addAll(Arrays.asList(1,2,3));
+        listObs = FXCollections.observableList(layers);
         System.out.println(mapObjectsDB);
         for (sample.databasemanage.entity.MapObject objDB: mapObjectsDB) {
             ArrayList<Coordinate> coords = coordinateRepo.selectByObjectId(objDB.getId());
-
+            if (!listObs.contains(objDB.getLayer()))
+                listObs.add(objDB.getLayer());
+            System.out.println(objDB.getLayer());
             if (objDB.getShape() == sample.databasemanage.entity.MapObject.Shape.CIRCLE
             || objDB.getShape() == sample.databasemanage.entity.MapObject.Shape.ELLIPSE) {
                 ArrayList<Radius> radius = radiusRepo.selectByObjectId(objDB.getId());
@@ -299,9 +304,11 @@ public class Controller implements Initializable {
             else
                 mapObjects.add(objDB.toObject(coords));
         }
-
+        table.setItems(listObs);
         drawObjects();
         toolBar.setVisible(true);
+        toolBar1.setVisible(true);
+        toolBar2.setVisible(true);
         return true;
     }
 
@@ -464,6 +471,8 @@ public class Controller implements Initializable {
             }
             clearObjects();
             toolBar.setVisible(false);
+            toolBar1.setVisible(false);
+            toolBar2.setVisible(false);
         }
     }
 
@@ -826,7 +835,8 @@ public class Controller implements Initializable {
         }
         mapObjects.removeAll(tmp);
         listObs.remove(listObs.indexOf(getActiveLayer()));
-        table.getSelectionModel().select(layers.get(layers.indexOf(1)));
+        if (listObs.size()<1) listObs.add(1);
+        table.getSelectionModel().select(listObs.get(listObs.indexOf(1)));
         setActiveLayer(layers.get(0));
     }
 
@@ -873,7 +883,7 @@ public class Controller implements Initializable {
             radiusRepo = new RadiusRepo();
             mapRepo = new MapRepo();
         } catch (SQLException e) {
-            //throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
         pane.addEventHandler(MouseEvent.MOUSE_PRESSED,mousePressedHandler);
         pane.addEventHandler(MouseEvent.MOUSE_DRAGGED,mouseDraggedHandler);
