@@ -55,13 +55,14 @@
    <left>
       <ToolBar fx:id="toolBar1" orientation="VERTICAL" prefHeight="40.0" BorderPane.alignment="CENTER">
          <items>
+             <Button fx:id="boopBTN1121" contentDisplay="GRAPHIC_ONLY" maxHeight="40.0" maxWidth="40.0" mnemonicParsing="false" onAction="#cursor" prefHeight="40.0" prefWidth="40.0" />
             <Button fx:id="circleBtn" contentDisplay="CENTER" maxHeight="40.0" maxWidth="40.0" mnemonicParsing="false" onAction="#circle" prefHeight="40.0" prefWidth="40.0" />
-          <Button fx:id="ellipsisBtn" maxHeight="40.0" maxWidth="40.0" mnemonicParsing="false" onAction="#ellipsis" prefHeight="40.0" prefWidth="40.0" />
+            <Button fx:id="ellipsisBtn" maxHeight="40.0" maxWidth="40.0" mnemonicParsing="false" onAction="#ellipsis" prefHeight="40.0" prefWidth="40.0" />
             <Button fx:id="lineBtn" maxHeight="40.0" maxWidth="40.0" mnemonicParsing="false" onAction="#line" prefHeight="40.0" prefWidth="40.0" />
             <Button fx:id="polylineBtn" maxHeight="40.0" maxWidth="40.0" mnemonicParsing="false" onAction="#wierdLine" prefHeight="40.0" prefWidth="40.0" />
             <Button fx:id="rectangleBtn" maxHeight="40.0" maxWidth="40.0" mnemonicParsing="false" onAction="#rectangle" prefHeight="40.0" prefWidth="40.0" />
             <Button fx:id="polygonBtn" maxHeight="40.0" maxWidth="40.0" mnemonicParsing="false" onAction="#wierdRectangle" prefHeight="40.0" prefWidth="40.0" />
-            <Button fx:id="boopBTN1121" contentDisplay="GRAPHIC_ONLY" maxHeight="40.0" maxWidth="40.0" mnemonicParsing="false" onAction="#cursor" prefHeight="40.0" prefWidth="40.0" />
+             <Button fx:id="zone" maxHeight="40.0" maxWidth="40.0" mnemonicParsing="false" onAction="#affectedArea" prefHeight="40.0" prefWidth="40.0" />
          </items>
       </ToolBar>
    </left>
